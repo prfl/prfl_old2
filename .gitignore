@@ -341,8 +341,6 @@ healthchecksdb
 src/wwwroot/js/test.js
 src/Pages/Test.razor
 
-# App Settings
-*appsettings*
 
 # Firebase
 *firebase*
