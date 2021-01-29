@@ -1,0 +1,120 @@
+@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+
+html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+a, .btn-link {
+    color: #0366d6;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.content {
+    padding-top: 0.2rem;
+}
+
+.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
+
+.invalid {
+    outline: 1px solid red;
+}
+
+.validation-message {
+    color: red;
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+
+
+a {
+    text-decoration: none !important;
+}
+
+
+
+.nav-scroller {
+    position: relative;
+    z-index: 2;
+    height: 2.75rem;
+    overflow-y: hidden;
+  }
+  
+  .nav-scroller .nav {
+    display: flex;
+    flex-wrap: nowrap;
+    padding-bottom: 1rem;
+    margin-top: -1px;
+    /* overflow-x: auto; */
+    text-align: center;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+
+.bg-lightblue {
+    background-color: #b9ddf9!important;
+}
+
+.bg-lightgreen {
+    background-color: #bdf9b9!important;
+}
+
+.border-left-primary {
+    border-left: .25rem solid #4e73df!important;
+}
+
+.border-left-info {
+    border-left: .25rem solid #cff4fc!important;
+}
+
+.border-left-danger {
+    border-left: .25rem solid #e62b2b!important;
+}
+
+.form-group > label {
+    margin-bottom: .5rem!important;
+}
+
+.bg-pink {
+    background-color: #ede4e4;
+}
+.footer {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+a strong{
+    color: #000 !important;
+    
+}
+
+.mt-6 {
+    margin-top: 3.5rem!important;
+}

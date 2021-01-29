@@ -1,0 +1,74 @@
+@using Profile.Shared.Models.Admin
+@using Profile.Shared.Models
+@inject HttpClient client
+
+
+<div class="my-3 p-3 rounded shadow bg-white">
+  <div class="row">
+
+    <div class="col-1">
+      <img src="@IconUrl" />
+    </div>
+    @if(IsFavorite == true) {
+      col = "col-8";
+    }
+    else {
+      col = "col-9";
+    }
+    <div class="@col ml-3">
+      <a href="@Url">
+        <strong class="d-block text-gray-dark">@Name</strong>
+      </a>
+    </div>
+
+    @if (IsFavorite == true)
+          {
+      <div class="col-1">
+        
+          <img src="/assets/icons/star-fill.svg" height="20px" width="20px" />
+        
+      </div>
+    }
+    <div class="col-1">
+      
+
+      <a data-bs-toggle="modal" data-bs-target="#@ModalId"><img src="/assets/icons/info-circle-outline.svg"/></a>
+
+      <!-- Modal -->
+      <div class="modal fade" id="@ModalId" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">@Name</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              @Description
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+  </div>
+</div>
+
+
+@code {
+  [Parameter] public string ModalId { get; set; }
+  [Parameter] public string Url { get; set; }
+  [Parameter] public string Name { get; set; }
+  [Parameter] public string Description { get; set; }
+  [Parameter] public string IconUrl { get; set; }
+  [Parameter] public bool IsFavorite { get; set; }
+  [Parameter] public string UserId { get; set; }
+  [Parameter] public string LinkId { get; set; }
+  [Parameter] public LinkType Type { get; set; }
+  [Parameter] public Application Application { get; set; }
+  public string col { get; set; }
+
+}

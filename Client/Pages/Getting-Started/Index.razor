@@ -1,0 +1,145 @@
+@page "/admin/getting-started"
+@using Microsoft.AspNetCore.Authorization
+@using Profile.Shared.Models
+@inject HttpClient client
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+@layout AppLayout
+
+
+
+<main class="container">
+
+
+  <div class="d-flex align-items-center p-3 my-3 bg-purple rounded shadow-sm">
+    <img class="me-3" src="/icon-512.png" alt="" width="48" height="48">
+    <div class="lh-1">
+      <h1 class="h6 mb-0 lh-1">Getting Started</h1>
+      <small>prfl.ga</small>
+    </div>
+  </div>
+
+
+  <div class="card border-0 my-3 p-3 bg-white rounded shadow-sm">
+    <h6 class="border-bottom pb-2 mb-0">What's this?</h6>
+    <div class="d-flex text-muted pt-3">
+        
+        <p>This is a <strong>step-by-step</strong> guide that walks you through what you can do in prfl.ga</p>
+    </div>
+  </div>
+
+  @if(GettingStarted != null && !GettingStarted.AccountIsCreated) {
+    <div class="card border-0 my-3 p-3 bg-white rounded shadow-sm">
+      <h6 class="border-bottom pb-2 mb-0">Add your first <strong class="text-primary">Account</strong></h6>
+          <div class="d-flex text-muted pt-3">
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+              Connect one of your social accounts like Facebook, Instagram, etc.
+            </label>
+          </div>
+
+      </div>
+      <div class="row">
+          <div class="col"><a href="admin/getting-started/create/account" class="btn btn-sm btn-primary float-start">Add Account</a></div>
+          <div class="col"><button @onclick="@(() => UpdateGettingStarted(LinkType.Account))" class="btn btn-sm btn-warning float-end">Skip</button></div>
+      </div>
+    </div>
+  }
+  else {
+    <div class="card border-0 my-3 p-2 bg-white rounded shadow-sm">
+      <h6 class="mb-0 ">✅ <span class="text-decoration-line-through">Add your first <strong class="text-primary">Account</strong></span></h6>
+    </div>
+  }
+
+  
+  @if(GettingStarted != null && GettingStarted.VideoIsCreated == false) {
+    <div class="card border-0 my-3 p-3 bg-white rounded shadow-sm">
+      <h6 class="border-bottom pb-2 mb-0">Add your first <strong class="text-primary">Video</strong></h6>
+          <div class="d-flex text-muted pt-3">
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+              Add your first Video from Youtube. Just copy the link from Youtube and past it in the link field
+            </label>
+          </div>
+
+      </div>
+      <div class="row">
+          <div class="col"><a href="admin/getting-started/create/video" class="btn btn-sm btn-primary float-start">Add Video</a></div>
+          <div class="col"><button @onclick="@(() => UpdateGettingStarted(LinkType.Video))" class="btn btn-sm btn-warning float-end">Skip</button></div>
+      </div>
+    </div>
+  }
+  else {
+    <div class="card border-0 my-3 p-2 bg-white rounded shadow-sm">
+      <h6 class="mb-0 ">✅ <span class="text-decoration-line-through">Add your first <strong class="text-primary">Video</strong></span></h6>
+    </div>
+  }
+
+
+
+  @if(GettingStarted != null && !GettingStarted.LinkIsCreated) {
+    <div class="card border-0 my-3 p-3 bg-white rounded shadow-sm">
+      <h6 class="border-bottom pb-2 mb-0">Add your first <strong class="text-primary">Link</strong></h6>
+          <div class="d-flex text-muted pt-3">
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+            <label class="form-check-label" for="flexCheckDefault">
+              Add your first Link. Any Link that you want
+            </label>
+          </div>
+
+      </div>
+      <div class="row">
+          <div class="col"><a href="admin/getting-started/create/link" class="btn btn-sm btn-primary float-start">Add Link</a></div>
+          <div class="col"><button @onclick="@(() => UpdateGettingStarted(LinkType.Link))" class="btn btn-sm btn-warning float-end">Skip</button></div>
+      </div>
+    </div>
+  }
+  else {
+    <div class="card border-0 my-3 p-2 bg-white rounded shadow-sm">
+      <h6 class="mb-0 ">✅ <span class="text-decoration-line-through">Add your first <strong class="text-primary">Link</strong></span></h6>
+    </div>
+  }
+
+</main>
+
+
+
+
+@code {
+
+    public GettingStarted GettingStarted { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync() {
+
+        GettingStarted = await client.GetFromJsonAsync<GettingStarted>("api/gettingstarted");
+
+        if(GettingStarted.AccountIsCreated  
+              && GettingStarted.VideoIsCreated 
+              && GettingStarted.LinkIsCreated) {
+                NavigationManager.NavigateTo("admin/favorite");
+              }
+    }
+
+    private async Task UpdateGettingStarted(LinkType type) {
+        if(type == LinkType.Account) {
+            GettingStarted.AccountIsCreated = true;
+            await client.PutAsJsonAsync($"api/gettingstarted/{GettingStarted.GettingStartedId}", GettingStarted);
+            await OnInitializedAsync();
+        }
+        else if(type == LinkType.Video) { 
+            GettingStarted.VideoIsCreated = true;
+            await client.PutAsJsonAsync($"api/gettingstarted/{GettingStarted.GettingStartedId}", GettingStarted);
+            await OnInitializedAsync();
+        }
+        else if(type == LinkType.Link) {
+            GettingStarted.LinkIsCreated = true;
+            await client.PutAsJsonAsync($"api/gettingstarted/{GettingStarted.GettingStartedId}", GettingStarted);
+            await OnInitializedAsync();
+        }
+    }
+}

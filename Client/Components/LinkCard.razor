@@ -1,0 +1,75 @@
+@using Profile.Shared.Models
+
+
+  
+  <div class="my-3 p-3 rounded shadow" >
+    <div class="row">
+
+      <div class="col-2">
+        <img src="@IconUrl" height="26px" width="26px"/>
+      </div>
+
+      <div class="col-8">
+          <a data-bs-toggle="modal" data-bs-target="#@ModalId"><strong class="d-block text-gray-dark" >@Name</strong></a>
+
+            <!-- Modal -->
+            <div class="modal fade" id="@ModalId" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">@Name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    @Description
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+      </div>
+      
+
+      <div class="col-1">
+          @if(IsFavorite == true) {
+          <img class="float-right" src="/assets/icons/star-fill.svg" height="20px" width="20px"/>
+        }
+      </div>
+
+      <div class="col-1">
+        <div class="dropdown">
+          <a class="float-right" data-bs-toggle="dropdown" href="#"  aria-expanded="false" id="dropdownMenuLink">
+              <img src="/assets/icons/menu.svg" height="20px" width="20px">
+          </a>
+
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <li><a class="dropdown-item" href="@Link">Open</a></li>
+            <li><a class="dropdown-item" href="@EditLink">Edit</a></li>
+            <li><a class="dropdown-item" @onclick="Remove">@RemoveMenuName</a></li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+
+  
+
+
+
+
+  @code {
+      [Parameter] public string ModalId { get; set; }
+      [Parameter] public string Link { get; set; }
+      [Parameter] public string Name { get; set; }
+      [Parameter] public string Description { get; set; }
+      [Parameter] public string IconUrl { get; set; }
+      [Parameter] public bool IsFavorite { get; set; }
+      [Parameter] public string EditLink { get; set; }
+      [Parameter] public string RemoveMenuName { get; set; }
+      [Parameter] public EventCallback Remove { get; set; }
+  }

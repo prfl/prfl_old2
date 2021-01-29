@@ -1,0 +1,272 @@
+@page "/admin/{linkType}"
+@using Profile.Client.Components
+@using Profile.Client.Components.Prfl
+@using Profile.Shared.Models
+@inject HttpClient client
+@inject IJSRuntime jsRuntime
+@layout AppLayout
+@using Microsoft.AspNetCore.Authorization
+@inject IJSRuntime JSRuntime
+@attribute [Authorize]
+
+<Title Value="@linkType" />
+
+
+<div class="row mt-2">
+  <div class="col">
+    <a href="/admin/link/choose-type" class="btn btn-primary mb-2 float-left">Add Link</a>
+  </div>
+  @if(!String.IsNullOrEmpty(username)) {
+    <div class="col">
+        <a href="./@username" class="badge bg-primary mt-2 float-end">prfl.ga/@username</a>
+    </div>
+    }
+</div>
+
+
+@if(linkType.ToUpper() == "ACCOUNT") {
+    @if(Accounts == null) {
+        <div>
+            <Loading />
+        </div>
+    }
+    else if(Accounts.Length == 0) {
+        <div>
+            <NoLink LinkType="account" />
+        </div>
+    }
+    else {
+      @foreach(var account in Accounts) {
+        var userLink = account.Application.ApplicationUserLink + account.Username;
+        var editLink = $"admin/account/{account.AccountId}/edit";
+        <div>
+            <AccountsCard BackgroundColor="@account.Application.BackgroundColor" 
+                            ApplicationLink="@account.Application.ApplicationLink" 
+                            LogoLink="@account.Application.LogoLink" 
+                            TextColor="@account.Application.TextColor" 
+                            Username="@account.Username" 
+                            UserLink="@userLink"
+                            EditLink="@editLink"
+                            IsFavorite="@account.IsFavorite"
+                            Remove="(() => DeleteLink(account.AccountId, linkType))"/>
+        </div>
+        }  
+    }
+} 
+
+else if(linkType.ToUpper() == "LINK") {
+    @if(Links == null) {
+        <div>
+            <Loading />
+        </div>
+    }
+    else if(Links.Length == 0) {
+        <div>
+            <NoLink LinkType="link" />
+        </div>
+    }
+    else {
+      @foreach(var link in Links) {
+        var modalId = GetModalId();
+        var editLink = $"admin/link/{link.LinkId}/edit";
+        <div>
+            <Profile.Client.Components.LinkCard ModalId="@modalId" 
+                      Link="@link.Url" 
+                      Name="@link.Name" 
+                      Description="@link.Description" 
+                      IconUrl="/assets/icons/link.svg"
+                      IsFavorite="@link.IsFavorite" 
+                      EditLink="@editLink"
+                      RemoveMenuName="Delete"
+                      Remove="(() => DeleteLink(link.LinkId, linkType))"/>
+        </div> 
+      }
+    }
+}
+
+else if(linkType.ToUpper() == "PROJECT") {
+    @if(Projects == null) {
+        <div>
+            <Loading />
+        </div>
+    }
+    else if(Projects.Length == 0) {
+        <div>
+            <NoLink LinkType="project" />
+        </div>
+    }
+    else {
+      @foreach(var project in Projects) {
+            var modalId = GetModalId();
+            var editLink = $"admin/project/{project.ProjectId}/edit";
+            <div>
+                <Profile.Client.Components.LinkCard   ModalId="@modalId" 
+                            Link="@project.Url" 
+                            Name="@project.Name" 
+                            Description="@project.Description" 
+                            IconUrl="/assets/icons/kanban.svg" 
+                            IsFavorite="@project.IsFavorite" 
+                            EditLink="@editLink"
+                            RemoveMenuName="Delete"
+                            Remove="(() => DeleteLink(project.ProjectId, linkType))"/>
+            </div>
+        }
+    }
+}
+
+else if(linkType.ToUpper() == "VIDEO") {
+    @if(Videos == null) {
+        <div>
+            <Loading />
+        </div>
+    }
+    else if(Videos.Length == 0) {
+        <div>
+            <NoLink LinkType="video" />
+        </div>
+    }
+    else {
+      @foreach(var video in Videos) {
+        var modalId = GetModalId();
+        var editLink = $"admin/video/{video.VideoId}/edit";
+        <div>
+            <Profile.Client.Components.LinkCard ModalId="@modalId" 
+                      Link="@video.Url" 
+                      Name="@video.Name" 
+                      Description="@video.Description" 
+                      IconUrl="/assets/icons/video.svg"
+                      IsFavorite="@video.IsFavorite"
+                      EditLink="@editLink" 
+                      RemoveMenuName="Delete"
+                      Remove="(() => DeleteLink(video.VideoId, linkType))"/>
+        </div>
+      }
+    }
+}
+
+else if(linkType.ToUpper() == "FAVORITE") {
+    @if(Favorites == null) {
+        <div>
+            <Loading />
+        </div>
+    }
+    else if(Favorites.Count() == 0) {
+      <div>
+            <NoLink LinkType="favorite" />
+        </div>
+    }
+    else {
+      @foreach(var favorite in Favorites) {
+        var modalId = GetModalId();
+
+        if(favorite.Type == LinkType.Account) {
+          SetAccount(favorite.LinkId);
+          var userLink = Account.Application.ApplicationUserLink + Account.Username;
+          var editLink = $"admin/account/{Account.AccountId}/edit";
+
+          <div>
+            <AccountsCard   BackgroundColor="@Account.Application.BackgroundColor" 
+                            ApplicationLink="@Account.Application.ApplicationLink" 
+                            LogoLink="@Account.Application.LogoLink" 
+                            TextColor="@Account.Application.TextColor" 
+                            IsFavorite="@true"
+                            Username="@Account.Username" 
+                            UserLink="@userLink"
+                            EditLink="@editLink"
+                            Remove="(() => DeleteLink(favorite.FavoriteId, linkType))"/>
+          </div>
+        }
+
+        else {
+            
+           
+            var editLink = $"admin/{Enum.GetName(typeof(LinkType), favorite.Type).ToLower()}/{favorite.LinkId}/edit";
+          <div>
+            <Profile.Client.Components.LinkCard Link="@favorite.Url" 
+                      Name="@favorite.Name" 
+                      Description="@favorite.Description" 
+                      IconUrl="@favorite.IconUrl" 
+                      IsFavorite="@true"
+                      RemoveMenuName="Remove Favorite"
+                      EditLink="@editLink"
+                      Remove="(() => DeleteLink(favorite.FavoriteId, linkType))"/>
+          </div>
+        }
+
+      }
+    }
+}
+
+
+
+@code {
+    [Parameter] public string username { get; set; }
+    [Parameter] public string linkType { get; set; }
+    private int Count = 1;
+    private Link[] Links { get; set; }
+    private Account[] Accounts { get; set; }
+    private Project[] Projects { get; set; }
+    private Video[] Videos { get; set; }
+    private Favorite[] Favorites { get; set; }
+    private Account Account { get; set; }
+    
+
+    protected override async Task OnInitializedAsync() {
+        
+        await GetData(linkType);
+
+
+    }
+
+    private async Task GetData(string linkType) {
+
+        //StateContainer.SetPreviousPage($"{username}/{linkType}");
+
+        var user = await client.GetFromJsonAsync<ProfileUser>("api/user");
+        username = user.UserName;
+        
+        if(linkType.ToUpper() == "LINK") {
+            Links = await client.GetFromJsonAsync<Link[]>($"api/{linkType}");
+        }
+        else if(linkType.ToUpper() == "ACCOUNT") {
+            Accounts = await client.GetFromJsonAsync<Account[]>($"api/{linkType}");
+        }
+        else if(linkType.ToUpper() == "PROJECT") {
+            Projects = await client.GetFromJsonAsync<Project[]>($"api/{linkType}");
+        }
+        else if(linkType.ToUpper() == "VIDEO") {
+            Videos = await client.GetFromJsonAsync<Video[]>($"api/{linkType}");
+        }
+        else if(linkType.ToUpper() == "FAVORITE") {
+            Favorites = await client.GetFromJsonAsync<Favorite[]>($"api/{linkType}");
+            Accounts = await client.GetFromJsonAsync<Account[]>($"api/account");
+        }
+        
+    }
+
+    private string GetModalId()
+    {
+        var num = Count++;
+        return "modal" + num;
+    }
+
+    private void SetAccount(string accountId){ 
+      Account = Accounts.FirstOrDefault(a => a.AccountId == accountId);
+    }
+
+    private async Task DeleteLink(string linkId, string linkType) {
+        await client.DeleteAsync($"api/{linkType}/{linkId}");
+        await jsRuntime.InvokeVoidAsync("confirm", $"Are you sure you want to delete {linkId}?");
+        await OnInitializedAsync();
+    }
+
+    
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await OnInitializedAsync();
+    }
+    
+    
+}

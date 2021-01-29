@@ -1,0 +1,102 @@
+@page "/admin/getting-started/create/{linkType}"
+@using Profile.Client.Components.Forms
+@using Profile.Client.Components.Prfl
+@using Profile.Shared.Models.Admin
+@using Profile.Shared.Models
+@inject NavigationManager NavigationManager
+@inject HttpClient client
+@inject Services.PageContainer PageContainer
+@layout AppLayout
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+@{
+    string title = $"Create - {linkType}";
+}
+<Title Value="@title" />
+
+<h3 class="display-3">Create a new <strong class="text-primary">@linkType</strong></h3>
+<hr />
+<div class="col-md-6"> 
+
+
+    @if(linkType.ToUpper() == "PROJECT") {
+        <div>
+            <ProjectForm Project="@Project" OnValidSubmit="@CreateProject"/>
+        </div>
+    
+    }
+    else if(linkType.ToUpper() == "LINK") {
+        <div>
+            <LinkForm Link="@Link" OnValidSubmit="@CreateLink"/>
+        </div>
+    }
+    else if(linkType.ToUpper() == "ACCOUNT") {
+        <div>
+            <AccountForm Account="@Account" Applications="@Applications" OnValidSubmit="@CreateAccount"/>
+        </div>
+    }
+    else if(linkType.ToUpper() == "VIDEO") {
+        <div>
+            <VideoForm Video="@Video" OnValidSubmit="@CreateVideo"/>
+        </div>
+    }
+
+
+</div>
+
+@code {
+
+    [Parameter] public string username { get; set; }
+    [Parameter] public string linkType { get; set; }
+    private Application[] Applications { get; set; }
+    private Account Account = new Account();
+    private Project Project = new Project();
+    private Link Link = new Link();
+    private Video Video = new Video();
+    private GettingStarted GettingStarted = new GettingStarted();
+
+    protected override async Task OnInitializedAsync() {
+        Applications = await client.GetFromJsonAsync<Application[]>("api/application");
+        GettingStarted = await client.GetFromJsonAsync<GettingStarted>("api/gettingstarted");
+    }
+    private async Task CreateProject() {
+        await client.PostAsJsonAsync("api/project", Project);
+        NavigationManager.NavigateTo("admin/getting-started");
+        
+    }
+
+    private async Task CreateLink() {
+        await client.PostAsJsonAsync("api/link", Link);
+        await UpdateGettingStarted(LinkType.Link);
+        NavigationManager.NavigateTo("admin/getting-started");
+    }
+
+    private async Task CreateAccount() {
+        await client.PostAsJsonAsync("api/account", Account);
+        await UpdateGettingStarted(LinkType.Account);
+        NavigationManager.NavigateTo("admin/getting-started");
+    }
+
+    private async Task CreateVideo() {
+        await client.PostAsJsonAsync("api/video", Video);
+        await UpdateGettingStarted(LinkType.Video);
+        NavigationManager.NavigateTo("admin/getting-started");
+    }
+
+    private async Task UpdateGettingStarted(LinkType type) {
+        if(type == LinkType.Account) {
+            GettingStarted.AccountIsCreated = true;
+            await client.PutAsJsonAsync($"api/gettingstarted/{GettingStarted.GettingStartedId}", GettingStarted);
+        }
+        else if(type == LinkType.Video) { 
+            GettingStarted.VideoIsCreated = true;
+            await client.PutAsJsonAsync($"api/gettingstarted/{GettingStarted.GettingStartedId}", GettingStarted);
+        }
+        else if(type == LinkType.Link) {
+            GettingStarted.LinkIsCreated = true;
+            await client.PutAsJsonAsync($"api/gettingstarted/{GettingStarted.GettingStartedId}", GettingStarted);
+        }
+    }
+
+}

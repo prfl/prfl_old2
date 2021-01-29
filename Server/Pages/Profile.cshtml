@@ -1,0 +1,13 @@
+@page "user/{username}"
+@model Profile.Server.Pages.ProfileModel
+@{
+    ViewData["Title"] = "username";
+}
+
+
+<p>@Model.ProfileUser.UserName</p>
+
+@foreach (var item in Model.Favorites)
+{
+    <p>@item.Name</p>
+}

@@ -1,0 +1,79 @@
+@page "/f/{username}"
+@using Profile.Client.Components
+@using Profile.Shared.Models
+@inject NavigationManager NavigationManager
+@inject HttpClient client
+@inject IJSRuntime jsRuntime
+
+
+@if(Favorites == null) {
+      <p>Loading...</p>
+    }
+else if(Favorites.Count() == 0) {
+  <p>The user has no Favorites yet!</p>
+}
+else {
+  @foreach(var favorite in Favorites) {
+    var modalId = GetModalId();
+    
+    if(favorite.Type == LinkType.Account && Account != null) {
+      SetAccount(favorite.LinkId);
+      var userLink = Account.Application.ApplicationUserLink + Account.Username;
+      var editLink = $"/{username}/account/{Account.AccountId}/edit";
+
+      <div>
+        <AccountsCard BackgroundColor="@Account.Application.BackgroundColor" 
+                            ApplicationLink="@Account.Application.ApplicationLink" 
+                            LogoLink="@Account.Application.LogoLink" 
+                            TextColor="@Account.Application.TextColor" 
+                            IsFavorite="@true"
+                            Username="@Account.Username" 
+                            UserLink="@userLink"/>
+      </div>
+    }
+
+    else {
+      <div>
+        <LinkCard Link="@favorite.Url" 
+                  Name="@favorite.Name" 
+                  Description="@favorite.Description" 
+                  IconUrl="@favorite.IconUrl" 
+                  IsFavorite="@true"
+                  RemoveMenuName="Remove Favorite"
+                  Remove="(() => DeleteFavorite(favorite.FavoriteId))"/>
+      </div>
+    }
+    
+  }
+}
+
+@code {
+    [Parameter] public string username { get; set; }
+    private int Count = 1;
+    private Favorite[] Favorites { get; set; }
+    private Account[] Accounts { get; set; }
+    private Account Account { get; set; }
+    
+    protected override async Task OnInitializedAsync() {
+        Favorites = await client.GetFromJsonAsync<Favorite[]>($"api/favorite");
+        Accounts = await client.GetFromJsonAsync<Account[]>($"api/account/u/{username}");
+    }
+
+    private string GetModalId()
+    {
+        var num = Count++;
+        return "modal" + num;
+    }
+
+    private async Task DeleteFavorite(string favoriteId) {
+        await client.DeleteAsync($"api/favorite/{favoriteId}");
+        await jsRuntime.InvokeVoidAsync("confirm", $"Are you sure you want to delete {favoriteId}?");
+        await OnInitializedAsync();
+    }
+
+    private void SetAccount(string accountId){ 
+      Account = Accounts.FirstOrDefault(a => a.AccountId == accountId);
+        
+    }
+
+}

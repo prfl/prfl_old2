@@ -1,0 +1,73 @@
+@using Profile.Shared.Models
+@using Profile.Shared.Models.Admin
+@inject IJSRuntime jsRuntime
+
+<EditForm Model="@Account" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+
+
+<div class="row">
+    <div class="col">
+        @if(Applications != null) {
+            <div class="form-group mb-3">
+            <label class="control-label">Application</label>
+            <select class ="form-control" @bind="Account.ApplicationId" @bind:event="oninput">
+                <option value="" disabled selected>Select ...</option>
+                @foreach(var app in Applications) {
+                <option value="@app.ApplicationId">@app.Name</option>     
+                }
+            </select>
+            </div>
+            
+        }
+        @if(Account.ApplicationId != null) {
+            Application = Applications.FirstOrDefault(a => a.ApplicationId == Account.ApplicationId);
+            <div class="form-group mb-3">
+            <label class="control-label">Username</label>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-default">@Application.ApplicationUserLink</span>
+                <InputText class="form-control" id="basic-url" aria-describedby="inputGroup-sizing-default" @bind-Value="@Account.Username" placeholder="username"/>
+                <ValidationMessage For="@(() => Account.Username)" />
+            </div>
+        </div>
+        <div class="form-check form-switch mb-3">
+            <InputCheckbox class="form-check-input" type="checkbox" id="flexCheckDefault" @bind-Value="@Account.IsFavorite" />
+            <label class="form-check-label" for="flexCheckDefault">Add to favorites</label>
+            <ValidationMessage For="@(() => Account.IsFavorite)" />
+        </div>
+        }
+        
+        
+    </div>
+</div>
+    
+    <button type="submit" class="btn btn-success">
+        @ButtonText
+    </button>
+
+</EditForm>
+
+
+@code {
+    [Parameter] public Account Account { get; set; }
+    [Parameter] public Application[] Applications { get; set; }
+    public Application Application { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Create";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+
+
+
+    public async Task ShowTooltip() {
+        await jsRuntime.InvokeVoidAsync("showTooltip");
+    }
+
+
+    @* protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await jsRuntime.InvokeVoidAsync("addTooltips");
+        }
+    } *@
+}

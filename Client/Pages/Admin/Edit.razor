@@ -1,0 +1,97 @@
+@page "/admin/{linkType}/{linkId}/edit"
+@using Profile.Client.Components.Prfl
+@using Profile.Shared.Models.Admin
+@using Profile.Client.Components.Forms
+@inject NavigationManager NavigationManager
+@using Profile.Shared.Models
+@inject IJSRuntime jsRuntime
+@inject HttpClient client
+@layout AppLayout
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+
+
+@{
+    string title = $"Edit - {linkType}";
+}
+<Title Value="@title" />
+
+@if(linkType.ToUpper() == "project".ToUpper()) {
+    <div>
+        <ProjectForm Project="@Project" OnValidSubmit="@EditProject"/>
+    </div>
+    
+}
+else if(linkType.ToUpper() == "link".ToUpper()) {
+    <div>
+        <LinkForm Link="@Link" OnValidSubmit="@EditLink"/>
+    </div>
+}
+else if(linkType.ToUpper() == "account".ToUpper()) {
+    <div>
+        <AccountForm Account="@Account" Applications="@Applications" OnValidSubmit="@EditAccount"/>
+    </div>
+}
+else if(linkType.ToUpper() == "video".ToUpper()) {
+    <div>
+        <VideoForm Video="@Video" OnValidSubmit="@EditVideo"/>
+    </div>
+}
+
+
+
+
+
+@code {
+    [Parameter] public string username { get; set; }
+    [Parameter] public string linkType { get; set; }
+    [Parameter] public string linkId { get; set; }
+    private Application[] Applications { get; set; }
+    private Account Account = new Account();
+    private Project Project = new Project();
+    private Link Link = new Link();
+    private Video Video = new Video();
+
+
+    protected override async Task OnInitializedAsync() {
+
+        Applications = await client.GetFromJsonAsync<Application[]>("api/application");
+
+        if(linkType == "account") {
+            Account = await client.GetFromJsonAsync<Account>($"api/Account/{linkId}");
+        }
+        if(linkType == "link") {
+            Link = await client.GetFromJsonAsync<Link>($"api/link/{linkId}");
+        }
+        if(linkType == "project") {
+            Project = await client.GetFromJsonAsync<Project>($"api/Project/{linkId}");
+        }
+        if(linkType == "video") {
+            Video = await client.GetFromJsonAsync<Video>($"api/Video/{linkId}");
+        }
+        
+    }
+
+
+    private async Task EditProject() {
+        await client.PutAsJsonAsync($"api/project/{linkId}", Project);
+        await jsRuntime.InvokeVoidAsync("alert", $"Updated Successfully!");
+        NavigationManager.NavigateTo($"/{username}/link");
+    }
+
+    private async Task EditLink() {
+        await client.PutAsJsonAsync($"api/link/{linkId}", Link);
+        NavigationManager.NavigateTo($"/{username}/link");
+    }
+
+    private async Task EditAccount() {
+        await client.PutAsJsonAsync($"api/account/{linkId}", Account);
+        NavigationManager.NavigateTo($"{username}/link");
+    }
+
+    private async Task EditVideo() {
+        await client.PutAsJsonAsync($"api/video/{linkId}", Video);
+        NavigationManager.NavigateTo($"{username}/link");
+    }
+
+}

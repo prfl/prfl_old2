@@ -1,0 +1,53 @@
+﻿@inject Services.StateContainer StateContainer
+@inject NavigationManager NavigationManager
+
+
+<div class="container-fluid mt-6">
+<div class="row place-buttom shadow-sm rounded text-center row-cols-5">
+    <div class="col">
+        <NavLink class="nav-link" href="@accountUrl" Match="NavLinkMatch.All">
+            <img src="@accountIcon" >
+        </NavLink>
+    </div>
+    <div class="col">
+        <NavLink class="nav-link" Match="NavLinkMatch.All" href="@linkUrl">
+            <img src="@linkIcon" >
+        </NavLink>
+    </div>
+    <div class="col">
+        <NavLink class="nav-link" Match="NavLinkMatch.All" href="@favoriteUrl">
+            <img src="@favoriteIcon" >
+        </NavLink>
+    </div>
+    <div class="col">
+        <NavLink class="nav-link" href="@projectUrl"  Match="NavLinkMatch.All">
+            <img src="@projectIcon" >
+        </NavLink>
+    </div>
+    <div class="col">
+        <NavLink class="nav-link" href="@videoUrl"  Match="NavLinkMatch.All">
+            <img src="@videoIcon" >
+        </NavLink>
+    </div>
+</div>
+
+
+
+</div>
+
+@code {
+
+    private string favoriteUrl =>  StateContainer != null ? $"{StateContainer.Username}" : "";
+    private string accountUrl =>  StateContainer != null ? $"{StateContainer.Username}/accounts" : "";
+    private string linkUrl =>  StateContainer != null ? $"{StateContainer.Username}/links" : "";
+    private string projectUrl =>  StateContainer != null ? $"{StateContainer.Username}/projects" : "";
+    private string videoUrl =>  StateContainer != null ? $"{StateContainer.Username}/videos" : "";
+
+    private string favoriteIcon =>  StateContainer.FavoriteIconUrl != null ? $"{StateContainer.FavoriteIconUrl}" : "/assets/icons/star.svg";
+    private string accountIcon =>  StateContainer.AccountIconUrl != null ? $"{StateContainer.AccountIconUrl}" : "/assets/icons/account.svg";
+    private string linkIcon =>  StateContainer.LinkIconUrl != null ? $"{StateContainer.LinkIconUrl}" : "/assets/icons/link.svg";
+    private string projectIcon =>  StateContainer.ProjectIconUrl != null ? $"{StateContainer.ProjectIconUrl}" : "/assets/icons/kanban.svg";
+    private string videoIcon =>  StateContainer.VideoIconUrl != null ? $"{StateContainer.VideoIconUrl}" : "/assets/icons/video.svg";
+
+
+}

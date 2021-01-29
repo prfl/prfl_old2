@@ -1,0 +1,38 @@
+@using Profile.Shared.Models
+@inject HttpClient client
+
+  
+  <div class="my-3 p-3 rounded shadow" style="background-color: @BackgroundColor !important;">
+    <div class="row">
+      <div class="col-1">
+        <a href="@ApplicationLink"><img src="@LogoLink" height="26px" width="26px"></a>
+      </div>
+      <div class="col-9 mt-1 ml-3">
+          <a href="@UserLink"><strong class="d-block" style="color: @TextColor !important;">@Username</strong></a>
+      </div>
+      <div class="col-1 pt-1">
+          @if(IsFavorite == true) {
+          <img class="float-right" src="/assets/icons/star-fill.svg" height="20px" width="20px"/>
+        }
+      </div>
+    </div>
+  </div>
+
+
+
+
+@code {
+  [Parameter] public string UserLink { get; set; }
+  [Parameter] public string BackgroundColor { get; set; }
+  [Parameter] public string ApplicationLink {get; set; }
+  [Parameter] public string Username { get; set; }
+  [Parameter] public string TextColor { get; set; }
+  [Parameter] public string LogoLink { get; set; }
+  [Parameter] public bool IsFavorite { get; set; }
+  [Parameter] public string UserId { get; set; }
+  [Parameter] public string LinkId { get; set; }
+  [Parameter] public LinkType Type { get; set; }
+
+
+
+}
