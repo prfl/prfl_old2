@@ -1,0 +1,145 @@
+@page "/{username}"
+@using Microsoft.AspNetCore.Authorization
+@using Profile.Client.Components
+@using Profile.Client.Components.Prfl
+@using Profile.Shared.Models
+@inject Services.StateContainer StateContainer
+@inject HttpClient client
+@inject IHttpClientFactory ClientFactory
+@layout MainLayout
+
+
+<Title Value="@username" />
+
+
+
+@if(Favorites == null) {
+      <div>
+        <Loading />
+      </div>
+    }
+else if(Favorites.Count() == 0) {
+  <div class="alert alert-info mt-3" role="alert">
+        The user does not have any favorites yet.
+  </div>
+
+}
+
+else {
+  @foreach(var favorite in Favorites) {
+    var modalId = GetModalId(); 
+
+    if(favorite.Type == LinkType.Account ) {
+      if(Accounts != null) {
+        SetAccount(favorite.LinkId);
+        var userLink = Account.Application.ApplicationUserLink + Account.Username;
+
+        <div>
+          <Profile.Client.Components.Prfl.AccountCard  BackgroundColor="@Account.Application.BackgroundColor" 
+                        ApplicationLink="@Account.Application.ApplicationLink" 
+                        LogoLink="@Account.Application.LogoLink" 
+                        TextColor="@Account.Application.TextColor" 
+                        Username="@Account.Username" 
+                        UserLink="@userLink"
+                        UserId="@User.UserId"
+                        LinkId="@favorite.LinkId"
+                        Type="@LinkType.Account"/>
+        </div>
+      }
+      
+    }
+    else {
+      
+      <div>
+        <Profile.Client.Components.Prfl.LinkCard Url="@favorite.Url" 
+                  Name="@favorite.Name" 
+                  ModalId="@modalId"
+                  Description="@favorite.Description" 
+                  IconUrl="@favorite.IconUrl"
+                  UserId="@User.UserId"
+                  LinkId="@favorite.LinkId"
+                  Type="@favorite.Type"/>
+    </div>
+    }
+    
+  }
+}
+
+
+
+@code {
+    [Parameter] public string username { get; set; }
+    private int Count = 1;
+    private Favorite[] Favorites { get; set; }
+    private Account[] Accounts { get; set; }
+    private Account Account { get; set; }
+    private User User { get; set;}
+
+
+    protected override async Task OnInitializedAsync() {
+
+        ChangePropertyValue();
+        ChangeIconValue();
+
+        StateContainer.OnChange += StateHasChanged;
+
+        var client = ClientFactory.CreateClient("ServerAPI.NoAuthenticationClient");
+
+        Favorites = await client.GetFromJsonAsync<Favorite[]>($"api/favorite/u/{username}");
+        Accounts = await client.GetFromJsonAsync<Account[]>($"api/account/u/{username}");
+
+        User = await client.GetFromJsonAsync<User>($"api/user/u/{username}");
+        
+        StateContainer.OnChange += StateHasChanged;
+    }
+
+    private void ChangePropertyValue()
+    {
+        StateContainer.SetProperty(username);
+    }
+
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+
+    private void ChangeIconValue()
+    {
+        StateContainer.SetAccountIcon("/assets/icons/account.svg");
+        StateContainer.SetLinkIcon("/assets/icons/link-fill-ns.svg");
+        StateContainer.SetFavoriteIcon("/assets/icons/star-fill.svg");
+        StateContainer.SetProjectIcon("/assets/icons/kanban.svg");
+        StateContainer.SetVideoIcon("/assets/icons/video.svg");
+    }
+
+    private string GetModalId()
+    {
+        var num = Count++;
+        return "modal" + num;
+    }
+
+    private void SetAccount(string accountId){ 
+      Account = Accounts.FirstOrDefault(a => a.AccountId == accountId);
+        
+    }
+
+    @* protected override void OnAfterRender(bool firstRender)
+    {
+        //base.OnAfterRender(firstRender);
+        if(firstRender) {
+          ChangePropertyValue();
+        }
+    } *@
+
+
+    @* public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        StateContainer.SetProperty(username);
+        await base.SetParametersAsync(parameters);
+    } *@
+
+
+}
+
+      

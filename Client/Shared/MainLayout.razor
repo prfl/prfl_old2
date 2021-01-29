@@ -1,0 +1,36 @@
+@using Microsoft.AspNetCore.Authorization
+@inject Services.StateContainer StateContainer
+@inherits LayoutComponentBase
+@attribute [AllowAnonymous]
+
+
+
+
+
+<div class="page">
+    <div class="sidebar m-1 shadow-sm">
+        <Header Username="@Username"/>
+    </div>
+
+    <div class="main">
+        <div class="top-row px-2 mt-1 mx-1 shadow-sm">
+            <a href="https://prfl.ga/about" target="_blank" class="ml-md-auto">About</a>
+        </div>
+        
+        <div class="content">
+            <div class="container">
+                @Body
+            </div>
+        </div>
+        <BottomNav />
+    </div>
+</div>
+  
+
+@code {
+    public string Username => StateContainer != null ? $"{StateContainer.Username}" : "";
+
+    
+}
+
+       

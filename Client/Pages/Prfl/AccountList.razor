@@ -1,0 +1,91 @@
+@page "/{username}/accounts"
+@using Profile.Client.Components
+@using Profile.Client.Components.Prfl
+@using Profile.Shared.Models
+@using Services
+@inject IHttpClientFactory ClientFactory
+@inject StateContainer StateContainer
+@implements IDisposable
+@layout MainLayout
+
+<Title Value="@username" />
+
+
+
+
+@if(Accounts == null) {
+    <div>
+        <Loading />
+    </div>
+}
+
+else if(Accounts.Length == 0) {
+    <div class="alert alert-info mt-3" role="alert">
+        The user does not have any accounts yet.
+    </div>
+}
+
+else {
+    @foreach (var account in Accounts)
+    {
+        var userLink = account.Application.ApplicationUserLink + account.Username;
+        <div>
+            <AccountCard    BackgroundColor="@account.Application.BackgroundColor" 
+                            UserLink="@userLink" 
+                            ApplicationLink="@account.Application.ApplicationLink" 
+                            Username="@account.Username" 
+                            TextColor="@account.Application.TextColor" 
+                            LogoLink="@account.Application.LogoLink"
+                            IsFavorite="@account.IsFavorite"
+                            UserId="@User.UserId"
+                            LinkId="@account.AccountId"
+                            Type="@LinkType.Account"/>
+        </div>
+    }
+}
+
+
+
+ 
+
+
+
+@code {
+    [Parameter] public string username { get; set; }
+    public string UserId { get; set; }
+    private Account[] Accounts { get; set; }
+    private User User { get; set; }
+    protected override async Task OnInitializedAsync() {
+        ChangePropertyValue();
+        ChangeIconValue();
+
+        var client = ClientFactory.CreateClient("ServerAPI.NoAuthenticationClient");
+
+        User = await client.GetFromJsonAsync<User>($"api/user/u/{username}");
+        Accounts = await client.GetFromJsonAsync<Account[]>($"api/account/u/{username}");
+        
+        StateContainer.OnChange += StateHasChanged;
+    } 
+
+    private void ChangePropertyValue()
+    {
+        StateContainer.SetProperty(username);
+    }
+
+    private void ChangeIconValue()
+    {
+        StateContainer.SetAccountIcon("/assets/icons/account-fill.svg");
+        StateContainer.SetLinkIcon("/assets/icons/link-fill-ns.svg");
+        StateContainer.SetFavoriteIcon("/assets/icons/star.svg");
+        StateContainer.SetProjectIcon("/assets/icons/kanban.svg");
+        StateContainer.SetVideoIcon("/assets/icons/video.svg");
+    }
+
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+
+
+}

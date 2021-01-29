@@ -1,0 +1,86 @@
+@page "/{username}/videos"
+@using Profile.Client.Components
+@using Profile.Client.Components.Prfl
+@using Profile.Shared.Models
+@inject IHttpClientFactory ClientFactory
+@inject Services.StateContainer StateContainer
+@layout MainLayout
+
+<Title Value="@username" />
+
+@if(Videos == null) {
+    <Loading />
+}
+else if(Videos.Length == 0) {
+    <div class="alert alert-info" role="alert">
+        The user does not have any videos yet.
+    </div>
+
+}
+else {
+    @foreach(var video in Videos) {
+        var modalId = GetModalId();
+        <div>
+            <Profile.Client.Components.Prfl.LinkCard   ModalId="@modalId" 
+                        Url="@video.Url" 
+                        Name="@video.Name" 
+                        Description="@video.Description" 
+                        IsFavorite="@video.IsFavorite" 
+                        IconUrl="/assets/icons/video.svg"
+                        UserId="@User.UserId"
+                        LinkId="@video.VideoId"
+                        Type="@LinkType.Project"/>
+        </div>
+        
+    }
+}
+
+ 
+
+
+
+@code {
+    [Parameter] public string username { get; set; }
+    private Video[] Videos { get; set; }
+
+    private User User { get; set; }
+    private int Count = 1;
+
+    protected override async Task OnInitializedAsync() {
+
+        ChangePropertyValue();
+        ChangeIconValue();
+
+        var client = ClientFactory.CreateClient("ServerAPI.NoAuthenticationClient");
+
+        User = await client.GetFromJsonAsync<User>($"api/user/u/{username}");
+        Videos = await client.GetFromJsonAsync<Video[]>($"api/video/u/{username}");
+
+        StateContainer.OnChange += StateHasChanged;
+    }
+
+    private void ChangePropertyValue()
+    {
+        StateContainer.SetProperty(username);
+    }
+
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+
+    private void ChangeIconValue()
+    {
+        StateContainer.SetAccountIcon("/assets/icons/account.svg");
+        StateContainer.SetLinkIcon("/assets/icons/link-fill-ns.svg");
+        StateContainer.SetFavoriteIcon("/assets/icons/star.svg");
+        StateContainer.SetProjectIcon("/assets/icons/kanban.svg");
+        StateContainer.SetVideoIcon("/assets/icons/video-fill.svg");
+    }
+    private string GetModalId()
+    {
+        var num = Count++;
+        return "modal" + num;
+    }
+}
