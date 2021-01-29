@@ -22,7 +22,7 @@ jobs:
         dotnet-version: '5.0.x'
 
     - name: Build with dotnet
-      run: dotnet build Server/Profile.Server.csproj --configuration Release
+      run: dotnet build --configuration Release
 
     - name: dotnet publish
       run: dotnet publish Server/Profile.Server.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
