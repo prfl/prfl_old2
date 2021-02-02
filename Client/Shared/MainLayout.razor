@@ -1,5 +1,7 @@
 @using Microsoft.AspNetCore.Authorization
+@using Profile.Shared.Models
 @inject Services.StateContainer StateContainer
+@inject IHttpClientFactory ClientFactory
 @inherits LayoutComponentBase
 @attribute [AllowAnonymous]
 
@@ -22,7 +24,7 @@
                 @Body
             </div>
         </div>
-        <BottomNav />
+        <BottomNav Username="@Username" />
     </div>
 </div>
   
