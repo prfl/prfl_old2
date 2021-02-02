@@ -16,23 +16,23 @@
 }
 <Title Value="@title" />
 
-@if(linkType.ToUpper() == "project".ToUpper()) {
+@if(linkType.ToUpper() == "PROJECT") {
     <div>
         <ProjectForm Project="@Project" OnValidSubmit="@EditProject"/>
     </div>
     
 }
-else if(linkType.ToUpper() == "link".ToUpper()) {
+else if(linkType.ToUpper() == "LINK") {
     <div>
         <LinkForm Link="@Link" OnValidSubmit="@EditLink"/>
     </div>
 }
-else if(linkType.ToUpper() == "account".ToUpper()) {
+else if(linkType.ToUpper() == "ACCOUNT") {
     <div>
         <AccountForm Account="@Account" Applications="@Applications" OnValidSubmit="@EditAccount"/>
     </div>
 }
-else if(linkType.ToUpper() == "video".ToUpper()) {
+else if(linkType.ToUpper() == "VIDEO") {
     <div>
         <VideoForm Video="@Video" OnValidSubmit="@EditVideo"/>
     </div>
@@ -42,8 +42,9 @@ else if(linkType.ToUpper() == "video".ToUpper()) {
 
 
 
+
+
 @code {
-    [Parameter] public string username { get; set; }
     [Parameter] public string linkType { get; set; }
     [Parameter] public string linkId { get; set; }
     private Application[] Applications { get; set; }
@@ -57,18 +58,21 @@ else if(linkType.ToUpper() == "video".ToUpper()) {
 
         Applications = await client.GetFromJsonAsync<Application[]>("api/application");
 
-        if(linkType == "account") {
+        if(linkType.ToUpper() == "ACCOUNT") {
             Account = await client.GetFromJsonAsync<Account>($"api/Account/{linkId}");
         }
-        if(linkType == "link") {
+        else if(linkType.ToUpper() == "LINK") {
             Link = await client.GetFromJsonAsync<Link>($"api/link/{linkId}");
         }
-        if(linkType == "project") {
+        else if(linkType.ToUpper() == "PROJECT") {
             Project = await client.GetFromJsonAsync<Project>($"api/Project/{linkId}");
         }
-        if(linkType == "video") {
+        else if(linkType.ToUpper() == "VIDEO") {
             Video = await client.GetFromJsonAsync<Video>($"api/Video/{linkId}");
         }
+
+
+
         
     }
 
@@ -76,22 +80,24 @@ else if(linkType.ToUpper() == "video".ToUpper()) {
     private async Task EditProject() {
         await client.PutAsJsonAsync($"api/project/{linkId}", Project);
         await jsRuntime.InvokeVoidAsync("alert", $"Updated Successfully!");
-        NavigationManager.NavigateTo($"/{username}/link");
+        NavigationManager.NavigateTo($"/admin/link");
     }
 
     private async Task EditLink() {
         await client.PutAsJsonAsync($"api/link/{linkId}", Link);
-        NavigationManager.NavigateTo($"/{username}/link");
+        NavigationManager.NavigateTo($"/admin/link");
     }
 
     private async Task EditAccount() {
         await client.PutAsJsonAsync($"api/account/{linkId}", Account);
-        NavigationManager.NavigateTo($"{username}/link");
+        NavigationManager.NavigateTo($"admin/link");
     }
 
     private async Task EditVideo() {
         await client.PutAsJsonAsync($"api/video/{linkId}", Video);
-        NavigationManager.NavigateTo($"{username}/link");
+        NavigationManager.NavigateTo($"admin/link");
     }
+
+
 
 }
