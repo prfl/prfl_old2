@@ -5,7 +5,6 @@
 @using Profile.Shared.Models
 @inject NavigationManager NavigationManager
 @inject HttpClient client
-@inject Services.PageContainer PageContainer
 @layout AppLayout
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
@@ -41,6 +40,11 @@
             <VideoForm Video="@Video" OnValidSubmit="@CreateVideo"/>
         </div>
     }
+    else if(linkType.ToUpper() == "SCHEDULE") {
+        <div>
+            <ScheduleForm Schedule="@Schedule" OnValidSubmit="@CreateSchedule"/>
+        </div>
+    }
 
 
 </div>
@@ -54,6 +58,7 @@
     private Project Project = new Project();
     private Link Link = new Link();
     private Video Video = new Video();
+    private Schedule Schedule = new Schedule();
 
 
     protected override async Task OnInitializedAsync() {
@@ -78,6 +83,11 @@
     private async Task CreateVideo() {
         await client.PostAsJsonAsync("api/video", Video);
         NavigationManager.NavigateTo("admin/video");
+    }
+
+    private async Task CreateSchedule() {
+        await client.PostAsJsonAsync("api/schedule", Schedule);
+        NavigationManager.NavigateTo("admin/schedule");
     }
 
 }
