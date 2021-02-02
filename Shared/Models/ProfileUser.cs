@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
@@ -15,16 +16,18 @@ namespace Profile.Shared.Models
         Creator,
         Developer,
         Analyst,
-        Artist,
-        Student,
-        Teacher
+        Artist
     }
 
     public class ProfileUser : IdentityUser
     {
-        public DateTime CreatedOn { get; set; }
-        public DateTime ModifiedOn { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public DateTime CreatedOn { get; set; } = DateTime.Now;
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public DateTime ModifiedOn { get; set; } = DateTime.Now;
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public ProfileUserType ProfileUserType { get; set; }
     }
 }
