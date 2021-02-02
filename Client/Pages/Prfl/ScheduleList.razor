@@ -1,0 +1,94 @@
+@page "/{username}/schedules"
+@using Profile.Client.Components
+@using Profile.Client.Components.Prfl
+@using Profile.Shared.Models
+@inject IHttpClientFactory ClientFactory
+@inject Services.StateContainer StateContainer
+@layout MainLayout
+
+<Title Value="@username" />
+
+@if(Schedules == null) {
+    <div>
+        <Loading />
+    </div>
+    
+}
+else if(Schedules.Length == 0) {
+    <div class="alert alert-info" role="alert">
+        @username does not have any schedules yet.
+    </div>
+
+}
+else {
+    @foreach(var schedule in Schedules) {
+        var modalId = GetModalId();
+        <div>
+            <Profile.Client.Components.Prfl.ScheduleCard   
+                        ModalId="@modalId" 
+                        Url="@schedule.Url" 
+                        Name="@schedule.Name" 
+                        Description="@schedule.Description" 
+                        Location="@schedule.Location"
+                        Weekday="@schedule.Weekday"
+                        Time="@schedule.Time"
+                        IsFavorite="@schedule.IsFavorite" 
+                        IconUrl="/assets/icons/calendar2.svg"
+                        UserId="@User.UserId"
+                        LinkId="@schedule.ScheduleId"
+                        Type="@LinkType.Schedule"/>
+        </div>
+        
+    }
+}
+
+ 
+
+
+
+@code {
+    [Parameter] public string username { get; set; }
+    private Schedule[] Schedules { get; set; }
+
+    private User User { get; set; }
+    private int Count = 1;
+
+    protected override async Task OnInitializedAsync() {
+
+        ChangePropertyValue();
+        ChangeIconValue();
+
+        var client = ClientFactory.CreateClient("ServerAPI.NoAuthenticationClient");
+
+        User = await client.GetFromJsonAsync<User>($"api/user/u/{username}");
+        Schedules = await client.GetFromJsonAsync<Schedule[]>($"api/Schedule/u/{username}");
+
+        StateContainer.OnChange += StateHasChanged;
+    }
+
+    private void ChangePropertyValue()
+    {
+        StateContainer.SetProperty(username);
+    }
+
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+
+    private void ChangeIconValue()
+    {
+        StateContainer.SetAccountIcon("/assets/icons/account.svg");
+        StateContainer.SetLinkIcon("/assets/icons/link-fill-ns.svg");
+        StateContainer.SetFavoriteIcon("/assets/icons/star.svg");
+        StateContainer.SetProjectIcon("/assets/icons/kanban.svg");
+        StateContainer.SetVideoIcon("/assets/icons/video.svg");
+        StateContainer.SetScheduleIcon("/assets/icons/calendar2-fill.svg");
+    }
+    private string GetModalId()
+    {
+        var num = Count++;
+        return "modal" + num;
+    }
+}
