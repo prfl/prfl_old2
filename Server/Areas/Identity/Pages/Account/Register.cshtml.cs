@@ -63,7 +63,7 @@ namespace Profile.Server.Areas.Identity.Pages.Account
 
             [Required]
             [Display(Name = "Username")]
-            [StringLength(12, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(24, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 5)]
             [RegularExpression("^[0-9a-zA-Z_]*$", ErrorMessage="Only letters, numbers and undersocre are allowed")]
             public string UserName { get; set; }
 
@@ -77,12 +77,17 @@ namespace Profile.Server.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required]
+            [Display(Name = "I am a ")]
+            public ProfileUserType ProfileUserType { get; set; }
         }
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task OnGetAsync( ProfileUserType profileUserType, string returnUrl = null)
         {
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            ViewData["ProfileUserType"] = profileUserType;
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
@@ -94,7 +99,7 @@ namespace Profile.Server.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid && reservedLinks == null)
             {
-                var user = new ProfileUser { UserName = Input.UserName, Email = Input.Email };
+                var user = new ProfileUser { UserName = Input.UserName, Email = Input.Email, ProfileUserType = Input.ProfileUserType };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
