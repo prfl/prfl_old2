@@ -38,7 +38,11 @@ else if(linkType.ToUpper() == "VIDEO") {
     </div>
 }
 
-
+else if(linkType.ToUpper() == "SCHEDULE") {
+    <div>
+        <ScheduleForm Schedule="@Schedule" OnValidSubmit="@EditSchedule"/>
+    </div>
+}
 
 
 
@@ -52,7 +56,7 @@ else if(linkType.ToUpper() == "VIDEO") {
     private Project Project = new Project();
     private Link Link = new Link();
     private Video Video = new Video();
-
+    private Schedule Schedule = new Schedule();
 
     protected override async Task OnInitializedAsync() {
 
@@ -70,7 +74,9 @@ else if(linkType.ToUpper() == "VIDEO") {
         else if(linkType.ToUpper() == "VIDEO") {
             Video = await client.GetFromJsonAsync<Video>($"api/Video/{linkId}");
         }
-
+        else if(linkType.ToUpper() == "SCHEDULE") {
+            Schedule = await client.GetFromJsonAsync<Schedule>($"api/schedule/{linkId}");
+        }
 
 
         
@@ -98,6 +104,9 @@ else if(linkType.ToUpper() == "VIDEO") {
         NavigationManager.NavigateTo($"admin/link");
     }
 
-
+    private async Task EditSchedule() {
+        await client.PutAsJsonAsync($"api/schedule/{linkId}", Schedule);
+        NavigationManager.NavigateTo($"admin/schedule");
+    }
 
 }
