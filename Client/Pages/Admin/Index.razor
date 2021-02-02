@@ -1,5 +1,6 @@
 @page "/admin/{linkType}"
 @using Profile.Client.Components
+@using Profile.Client.Components.Admin
 @using Profile.Client.Components.Prfl
 @using Profile.Shared.Models
 @inject HttpClient client
@@ -48,7 +49,7 @@
                             UserLink="@userLink"
                             EditLink="@editLink"
                             IsFavorite="@account.IsFavorite"
-                            Remove="(() => DeleteLink(account.AccountId, linkType))"/>
+                            Remove="(() => DeleteLink(account.AccountId, linkType, account.Username))"/>
         </div>
         }  
     }
@@ -78,7 +79,7 @@ else if(linkType.ToUpper() == "LINK") {
                       IsFavorite="@link.IsFavorite" 
                       EditLink="@editLink"
                       RemoveMenuName="Delete"
-                      Remove="(() => DeleteLink(link.LinkId, linkType))"/>
+                      Remove="(() => DeleteLink(link.LinkId, linkType, link.Name))"/>
         </div> 
       }
     }
@@ -108,7 +109,7 @@ else if(linkType.ToUpper() == "PROJECT") {
                             IsFavorite="@project.IsFavorite" 
                             EditLink="@editLink"
                             RemoveMenuName="Delete"
-                            Remove="(() => DeleteLink(project.ProjectId, linkType))"/>
+                            Remove="(() => DeleteLink(project.ProjectId, linkType, project.Name))"/>
             </div>
         }
     }
@@ -138,7 +139,7 @@ else if(linkType.ToUpper() == "VIDEO") {
                       IsFavorite="@video.IsFavorite"
                       EditLink="@editLink" 
                       RemoveMenuName="Delete"
-                      Remove="(() => DeleteLink(video.VideoId, linkType))"/>
+                      Remove="(() => DeleteLink(video.VideoId, linkType, video.Name))"/>
         </div>
       }
     }
@@ -173,7 +174,7 @@ else if(linkType.ToUpper() == "FAVORITE") {
                             Username="@Account.Username" 
                             UserLink="@userLink"
                             EditLink="@editLink"
-                            Remove="(() => DeleteLink(favorite.FavoriteId, linkType))"/>
+                            Remove="(() => DeleteLink(favorite.FavoriteId, linkType, favorite.Name))"/>
           </div>
         }
 
@@ -189,7 +190,7 @@ else if(linkType.ToUpper() == "FAVORITE") {
                       IsFavorite="@true"
                       RemoveMenuName="Remove Favorite"
                       EditLink="@editLink"
-                      Remove="(() => DeleteLink(favorite.FavoriteId, linkType))"/>
+                      Remove="(() => DeleteLink(favorite.FavoriteId, linkType, favorite.Name))"/>
           </div>
         }
 
@@ -219,8 +220,6 @@ else if(linkType.ToUpper() == "FAVORITE") {
     }
 
     private async Task GetData(string linkType) {
-
-        //StateContainer.SetPreviousPage($"{username}/{linkType}");
 
         var user = await client.GetFromJsonAsync<ProfileUser>("api/user");
         username = user.UserName;
@@ -254,12 +253,15 @@ else if(linkType.ToUpper() == "FAVORITE") {
       Account = Accounts.FirstOrDefault(a => a.AccountId == accountId);
     }
 
-    private async Task DeleteLink(string linkId, string linkType) {
-        await client.DeleteAsync($"api/{linkType}/{linkId}");
-        await jsRuntime.InvokeVoidAsync("confirm", $"Are you sure you want to delete {linkId}?");
-        await OnInitializedAsync();
+    private async Task DeleteLink(string linkId, string linkType, string linkName) {
+        
+        bool isConfirmed = await jsRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete your {linkType} {linkName}?");
+        if(isConfirmed) {
+            await client.DeleteAsync($"api/{linkType}/{linkId}");
+            await OnInitializedAsync();
+        }
+        
     }
-
     
 
 
