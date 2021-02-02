@@ -140,7 +140,7 @@ namespace Profile.Server.Controllers
                     Name = schedule.Name,
                     Description = schedule.Description,
                     Url = schedule.Url,
-                    IconUrl = "/assets/icons/calendar.svg"
+                    IconUrl = "/assets/icons/calendar2.svg"
                 };
                 _context.Favorite.Add(favorite);
                 await _context.SaveChangesAsync();
