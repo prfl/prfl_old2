@@ -1,0 +1,48 @@
+@using Profile.Shared.Models
+
+
+<a class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#exampleModalLive">Get Started</a>
+
+
+<div class="modal fade" id="exampleModalLive" tabindex="-1" aria-labelledby="exampleModalLiveLabel" style="display: none;" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLiveLabel">I am a </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-grid gap-2 ">
+            <a href="@defaultLink" class="btn btn-large btn-outline-dark mb-2">
+                <i class="bi bi-file-code"></i>
+                Default
+            </a>
+            <a href="@creatorLink" class="btn btn-outline-dark mb-2">
+                <i class="bi bi-play-btn"></i>
+                Creator
+            </a>
+            <a href="@developerLink" class="btn btn-large btn-outline-dark mb-2">
+                <i class="bi bi-file-code"></i>
+                Developer
+            </a>
+            <a href="@trainerLink" class="btn btn-outline-dark mb-2">
+                <i class="bi bi-file-person"></i>
+                Trainer
+            </a>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+@code{
+  public string defaultLink =>$"Identity/Account/Register?profileUserType={ProfileUserType.Default}";
+  public string creatorLink => $"Identity/Account/Register?profileUserType={ProfileUserType.Creator}";
+  public string developerLink => $"Identity/Account/Register?profileUserType={ProfileUserType.Developer}";
+  public string trainerLink => $"Identity/Account/Register?profileUserType={ProfileUserType.Trainer}";
+
+}
