@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using Profile.Client.Components
 @using Microsoft.AspNetCore.Components.Authorization
+@using Profile.Client.Pages.Admin
 @layout HomeLayout
 
 
@@ -14,7 +15,8 @@
                 <a class="btn btn-outline-secondary" href="/admin/favorite">Go to App</a>
             </Authorized>
             <NotAuthorized>
-                <a class="btn btn-outline-secondary" href="authentication/login">Get Started</a>              
+                @* <a class="btn btn-outline-secondary" href="authentication/login">Get Started</a>    *@
+                <ChooseProfile />
             </NotAuthorized>
         </AuthorizeView>
 
