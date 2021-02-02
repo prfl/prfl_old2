@@ -4,33 +4,45 @@
 @inject HttpClient client
 
 
-<div class="my-3 p-3 rounded shadow bg-white">
-  <div class="row">
-
-    <div class="col-1">
-      <img src="@IconUrl" />
-    </div>
-    @if(IsFavorite == true) {
-      col = "col-8";
-    }
-    else {
-      col = "col-9";
-    }
-    <div class="@col ml-3">
-      <a href="@Url">
-        <strong class="d-block text-gray-dark">@Name</strong>
-      </a>
-    </div>
-
-    @if (IsFavorite == true)
-          {
-      <div class="col-1">
-        
-          <img src="/assets/icons/star-fill.svg" height="20px" width="20px" />
-        
+<div class="my-3 pb-3 pt-2 rounded shadow bg-white">
+    <div class="row border-bottom border-light p-2">
+      <div class="col">
+        <span class="badge bg-light text-dark">@Location</span>
       </div>
-    }
-    <div class="col-1">
+      <div class="col text-center">
+        <span class="badge bg-light text-dark">@Weekday</span>
+      </div>
+      <div class="col">
+        <span class="badge bg-light text-dark float-end">@Time.TimeOfDay</span>
+      </div>
+    </div>
+
+    <div class="row p-3">
+
+      <div class="col-1">
+        <img src="@IconUrl" />
+      </div>
+      @if(IsFavorite == true) {
+        col = "col-8";
+      }
+      else {
+        col = "col-9";
+      }
+      <div class="@col ml-3">
+        <a href="@Url">
+          <p class="d-block text-dark mb-0">@Name</p>
+        </a>
+      </div>
+
+      @if (IsFavorite == true)
+            {
+        <div class="col-1">
+
+            <img src="/assets/icons/star-fill.svg" height="20px" width="20px" />
+
+        </div>
+      }
+      <div class="col-1">
       
 
       <a data-bs-toggle="modal" data-bs-target="#@ModalId"><img src="/assets/icons/info-circle-outline.svg"/></a>
@@ -63,6 +75,9 @@
   [Parameter] public string ModalId { get; set; }
   [Parameter] public string Url { get; set; }
   [Parameter] public string Name { get; set; }
+  [Parameter] public string Location { get; set; }
+  [Parameter] public DayOfWeek Weekday { get; set; }
+  [Parameter] public DateTime Time { get; set; }
   [Parameter] public string Description { get; set; }
   [Parameter] public string IconUrl { get; set; }
   [Parameter] public bool IsFavorite { get; set; }

@@ -9,6 +9,7 @@ namespace Profile.Client.Services {
         public string LinkIconUrl { get; set; }
         public string ProjectIconUrl { get; set; }
         public string VideoIconUrl { get; set; }
+        public string ScheduleIconUrl { get; set; }
         public event Action OnChange;
     
         public void SetProperty(string value)
@@ -30,6 +31,9 @@ namespace Profile.Client.Services {
         }
         public void SetVideoIcon(string value) {
             VideoIconUrl = value;
+        }
+        public void SetScheduleIcon(string value) {
+            ScheduleIconUrl = value;
         }
 
         public string GetProperty() {

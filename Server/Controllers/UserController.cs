@@ -37,6 +37,7 @@ namespace Profile.Server.Controllers
 
         public class UserModel {
             public string UserId { get; set; }
+            public ProfileUserType ProfileUserType { get; set; }
         }
         public UserModel Model = new UserModel();
 
@@ -45,6 +46,7 @@ namespace Profile.Server.Controllers
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
             Model.UserId = user.Id;
+            Model.ProfileUserType = user.ProfileUserType;
             return Model;
         }
 

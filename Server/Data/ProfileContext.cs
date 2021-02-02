@@ -87,5 +87,6 @@ namespace Profile.Server.Data
         public DbSet<Profile.Shared.Models.Subscription> Subscription { get; set; }
         public DbSet<Profile.Shared.Models.Admin.ReservedLink> ReservedLink { get; set; }
         public DbSet<Profile.Shared.Models.GettingStarted> GettingStarted { get; set; }
+        public DbSet<Profile.Shared.Models.Schedule> Schedule { get; set; }
     }
 }

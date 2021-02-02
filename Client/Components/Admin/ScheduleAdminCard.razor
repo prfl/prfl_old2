@@ -1,9 +1,24 @@
-@inherits Profile.Components.HtmlHelper
+@using Profile.Shared.Models
 
 
   
-  <div class="my-3 p-3 rounded shadow" >
-    <div class="row">
+  <div class="my-3 p-3 pt-1 rounded shadow" >
+
+
+    <div class="row border-bottom border-light p-1 pb-2 ">
+      <div class="col">
+        <span class="badge bg-light text-dark">@Location</span>
+      </div>
+      <div class="col text-center">
+        <span class="badge bg-light text-dark">@Weekday</span>
+      </div>
+      <div class="col">
+        <span class="badge bg-light text-dark float-end">@Time.TimeOfDay</span>
+      </div>
+    </div>
+
+
+    <div class="row pt-3">
 
       <div class="col-2">
         <img src="@IconUrl" height="26px" width="26px"/>
@@ -21,7 +36,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    @RenderMultiline(Description)
+                    @Description
                   </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -67,6 +82,9 @@
       [Parameter] public string Link { get; set; }
       [Parameter] public string Name { get; set; }
       [Parameter] public string Description { get; set; }
+      [Parameter] public string Location { get; set; }
+      [Parameter] public DayOfWeek Weekday { get; set; }
+      [Parameter] public DateTime Time { get; set; }
       [Parameter] public string IconUrl { get; set; }
       [Parameter] public bool IsFavorite { get; set; }
       [Parameter] public string EditLink { get; set; }

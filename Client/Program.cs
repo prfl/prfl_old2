@@ -22,7 +22,6 @@ namespace Profile.Client
             builder.RootComponents.Add<App>("#app");        
 
             builder.Services.AddSingleton<StateContainer>();
-            builder.Services.AddSingleton<PageContainer>();
 
             builder.Services.AddScoped<AuthenticationState>();
 
