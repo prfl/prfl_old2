@@ -1,0 +1,63 @@
+@using Profile.Shared.Models
+@using System
+
+<EditForm Model="@Schedule" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group mb-3">
+            <label class="control-label">Weekday</label>
+            <InputSelect class ="form-control" @bind-Value="@Schedule.Weekday">
+                <option value="" disabled selected>Select ...</option>
+                <option value="@DayOfWeek.Monday">Monday</option>  
+                <option value="@DayOfWeek.Tuesday">Tuesday</option>  
+                <option value="@DayOfWeek.Wednesday">Wednesday</option>  
+                <option value="@DayOfWeek.Thursday">Thursday</option>  
+                <option value="@DayOfWeek.Friday">Friday</option>  
+                <option value="@DayOfWeek.Saturday">Saturday</option>  
+                <option value="@DayOfWeek.Sunday">Sunday</option>  
+                
+            </InputSelect>
+            </div> 
+            <div class="form-group mb-3">
+                <label class="control-label">Time</label>
+                <input type="time" class="form-control" @bind="@Schedule.Time" />
+                <ValidationMessage For="@(() => Schedule.Time)" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">Name</label>
+                <InputText class="form-control" @bind-Value="@Schedule.Name" />
+                <ValidationMessage For="@(() => Schedule.Name)" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">Description</label>
+                <InputTextArea class="form-control" @bind-Value="@Schedule.Description" />
+                <ValidationMessage For="@(() => Schedule.Description)" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">Schedule URL</label>
+                <InputText class="form-control" @bind-Value="@Schedule.Url" placeholder="https://marzank.ga/appointment/123"/>
+                <ValidationMessage For="@(() => Schedule.Url)" />
+            </div>
+            <div class="form-check form-switch mb-3">
+                <InputCheckbox class="form-check-input" type="checkbox" id="flexCheckDefault" @bind-Value="@Schedule.IsFavorite" />
+                <label class="form-check-label" for="flexCheckDefault">Add to favorites</label>
+                <ValidationMessage For="@(() => Schedule.IsFavorite)" />
+            </div>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-success">
+        @ButtonText
+    </button>
+
+</EditForm>
+
+
+
+@code {
+    [Parameter] public Schedule Schedule { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Create";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+}
