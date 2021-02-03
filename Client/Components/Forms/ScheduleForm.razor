@@ -8,15 +8,18 @@
         <div class="col">
             <div class="form-group mb-3">
             <label class="control-label">Weekday</label>
-            <InputSelect class ="form-control" @bind-Value="@Schedule.Weekday">
+            <InputSelect class ="form-control" multiple="multiple" @bind-Value="@Schedule.Weekday">
                 <option value="" disabled selected>Select ...</option>
-                <option value="@DayOfWeek.Monday">Monday</option>  
-                <option value="@DayOfWeek.Tuesday">Tuesday</option>  
-                <option value="@DayOfWeek.Wednesday">Wednesday</option>  
-                <option value="@DayOfWeek.Thursday">Thursday</option>  
-                <option value="@DayOfWeek.Friday">Friday</option>  
-                <option value="@DayOfWeek.Saturday">Saturday</option>  
-                <option value="@DayOfWeek.Sunday">Sunday</option>  
+                <option value="@Weekday.Everyday">Everyday</option>  
+                <option value="@Weekday.MWF">Monday/Wednesday/Friday</option>  
+                <option value="@Weekday.TTHS">Tuesday/Thursday/Saturday</option>  
+                <option value="@Weekday.Monday">Monday</option>  
+                <option value="@Weekday.Tuesday">Tuesday</option>  
+                <option value="@Weekday.Wednesday">Wednesday</option>  
+                <option value="@Weekday.Thursday">Thursday</option>  
+                <option value="@Weekday.Friday">Friday</option>  
+                <option value="@Weekday.Saturday">Saturday</option>  
+                <option value="@Weekday.Sunday">Sunday</option>  
                 
             </InputSelect>
             </div> 
