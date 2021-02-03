@@ -41,7 +41,7 @@
         var userLink = account.Application.ApplicationUserLink + account.Username;
         var editLink = $"admin/account/{account.AccountId}/edit";
         <div>
-            <AccountsCard BackgroundColor="@account.Application.BackgroundColor" 
+            <AccountAdminCard BackgroundColor="@account.Application.BackgroundColor" 
                             ApplicationLink="@account.Application.ApplicationLink" 
                             LogoLink="@account.Application.LogoLink" 
                             TextColor="@account.Application.TextColor" 
@@ -71,7 +71,7 @@ else if(linkType.ToUpper() == "LINK") {
         var modalId = GetModalId();
         var editLink = $"admin/link/{link.LinkId}/edit";
         <div>
-            <Profile.Client.Components.LinkCard ModalId="@modalId" 
+            <LinkAdminCard ModalId="@modalId" 
                       Link="@link.Url" 
                       Name="@link.Name" 
                       Description="@link.Description" 
@@ -101,7 +101,7 @@ else if(linkType.ToUpper() == "PROJECT") {
             var modalId = GetModalId();
             var editLink = $"admin/project/{project.ProjectId}/edit";
             <div>
-                <Profile.Client.Components.LinkCard   ModalId="@modalId" 
+                <LinkAdminCard   ModalId="@modalId" 
                             Link="@project.Url" 
                             Name="@project.Name" 
                             Description="@project.Description" 
@@ -131,7 +131,7 @@ else if(linkType.ToUpper() == "VIDEO") {
         var modalId = GetModalId();
         var editLink = $"admin/video/{video.VideoId}/edit";
         <div>
-            <Profile.Client.Components.LinkCard ModalId="@modalId" 
+            <LinkAdminCard ModalId="@modalId" 
                       Link="@video.Url" 
                       Name="@video.Name" 
                       Description="@video.Description" 
@@ -199,7 +199,7 @@ else if(linkType.ToUpper() == "FAVORITE") {
           var editLink = $"admin/account/{Account.AccountId}/edit";
 
           <div>
-            <AccountsCard   BackgroundColor="@Account.Application.BackgroundColor" 
+            <AccountAdminCard   BackgroundColor="@Account.Application.BackgroundColor" 
                             ApplicationLink="@Account.Application.ApplicationLink" 
                             LogoLink="@Account.Application.LogoLink" 
                             TextColor="@Account.Application.TextColor" 
@@ -216,7 +216,7 @@ else if(linkType.ToUpper() == "FAVORITE") {
            
             var editLink = $"admin/{Enum.GetName(typeof(LinkType), favorite.Type).ToLower()}/{favorite.LinkId}/edit";
           <div>
-            <Profile.Client.Components.LinkCard Link="@favorite.Url" 
+            <LinkAdminCard Link="@favorite.Url" 
                       Name="@favorite.Name" 
                       Description="@favorite.Description" 
                       IconUrl="@favorite.IconUrl" 
