@@ -11,7 +11,10 @@
 
 <div class="page">
     <div class="sidebar m-1 shadow-sm">
-        <Header Username="@Username"/>
+        @if(Username != null && Username.Length > 0) {
+            <Header Username="@Username"/>
+        }
+
     </div>
 
     <div class="main">
@@ -24,15 +27,24 @@
                 @Body
             </div>
         </div>
-        <BottomNav Username="@Username" />
+        @if(Username != null && Username.Length > 0) {
+            <BottomNav Username="@Username" />
+        }
+
     </div>
 </div>
   
 
 @code {
-    public string Username => StateContainer != null ? $"{StateContainer.Username}" : "";
+    public string Username { get; set; }
 
-    
+    protected override void OnAfterRender(bool firstRender){
+        if(firstRender) {
+            Username = StateContainer.Username;
+            StateHasChanged();
+        }
+        
+    }
 }
 
        
