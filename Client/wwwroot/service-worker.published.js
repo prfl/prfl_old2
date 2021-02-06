@@ -26,6 +26,15 @@ async function onInstall(event) {
     await caches.open(cacheName).then(cache => cache.addAll(assetsRequests));
 }
 
+self.addEventListener('install', event => {
+  self.skipWaiting();
+  event.waitUntil(
+    caches.open(cacheName).then(function (cache) {
+      return cache.addAll(assetsRequests);
+    })
+  );
+});
+
 async function onActivate(event) {
     console.info('Service worker: Activate');
 
@@ -52,4 +61,3 @@ async function onFetch(event) {
 
     return cachedResponse || fetch(event.request);
 }
-/* updated 2020-02-06 11:00 */

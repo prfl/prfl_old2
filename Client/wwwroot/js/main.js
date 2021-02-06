@@ -38,3 +38,16 @@ function initialize(i,t){
       initialize(document,"freshchat-js-sdk")
     }
     window.addEventListener?window.addEventListener("load",initiateCall,!1):window.attachEvent("load",initiateCall,!1);
+
+
+    window.blazorFuncs = {
+      registerClient: function (caller) {
+        // window['updateAvailable']
+        return caller.invokeMethodAsync('registerClient')
+          .then(isAvailable => {
+            if (isAvailable) {
+              caller.invokeMethodAsync("onupdateavailable").then(r => console.log(r));
+            }
+          });
+      }
+    };
