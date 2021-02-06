@@ -1,0 +1,13 @@
+@inject IJSRuntime jsRuntime
+
+
+
+@code {
+    [Parameter] public bool IsHidden { get; set; }
+    protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if(firstRender && !IsHidden) {
+            await jsRuntime.InvokeVoidAsync("initFreshChat", false);
+        }
+        
+    }
+}
