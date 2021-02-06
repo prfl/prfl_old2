@@ -60,9 +60,10 @@
         display: block;
     }
 }
+
 .place-buttom {
     background-color: #f8f9fa;
-    margin:.25rem!important;
+    /* margin:.25rem!important; */
     display: flex;
     position: fixed;
     bottom: 0;
@@ -70,4 +71,3 @@
     left: 0;
     height:48px;
 }
-
