@@ -1,7 +1,8 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    /* font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; */
+    font-family: "Didact Gothic", sans-serif;
 }
 
 a, .btn-link {
@@ -15,7 +16,13 @@ a, .btn-link {
 }
 
 .content {
-    padding-top: 0.2rem;
+    flex: 1;
+    flex-direction: column;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    height: 100%;
+    width: 100%;
+    display: flex;
 }
 
 .valid.modified:not([type=checkbox]) {
@@ -118,3 +125,4 @@ a strong{
 .mt-6 {
     margin-top: 3.5rem!important;
 }
+
