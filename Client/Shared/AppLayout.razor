@@ -18,12 +18,6 @@
     <div class="main">
         <div class="top-row px-4 auth">
             <LoginDisplay />
-            @if (updateReady)
-            {
-              <p class="text-info mb-0">
-              There is an update available. Reload when ready.
-              </p>
-            }
         </div>
 
         <div class="content px-2">
@@ -33,25 +27,3 @@
 </div>
 
 <Freshchat IsHidden="@false"/>
-
-
-@code {
-    bool updateReady;
-    private DotNetObjectReference<object> objRef;
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if(!firstRender) {
-            await JSRuntime.InvokeAsync<object>("blazorFuncs.registerClient", objRef);
-        }
-      
-    }
-
-    [JSInvokable("onupdateavailable")]
-    public async Task<string> AppUpdate()
-    {
-      Console.WriteLine("New version available");
-      updateReady = true;
-      StateHasChanged();
-      return await Task.FromResult("Alerted client");
-    }
-}
