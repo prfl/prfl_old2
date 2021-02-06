@@ -24,9 +24,7 @@ function initFreshChat(isHidden) {
     },
     token: "533e17d6-146e-4720-8c6e-bcd1b82c0590",
     host: "https://wchat.freshchat.com"
-  });
-  console.warn(isHidden);
-  
+  }); 
 }
 
 function initialize(i,t){
@@ -40,14 +38,41 @@ function initialize(i,t){
     window.addEventListener?window.addEventListener("load",initiateCall,!1):window.attachEvent("load",initiateCall,!1);
 
 
-    window.blazorFuncs = {
-      registerClient: function (caller) {
-        // window['updateAvailable']
-        return caller.invokeMethodAsync('registerClient')
-          .then(isAvailable => {
-            if (isAvailable) {
-              caller.invokeMethodAsync("onupdateavailable").then(r => console.log(r));
-            }
-          });
-      }
-    };
+    // window.blazorFuncs = {
+    //   registerClient: function (caller) {
+    //     // window['updateAvailable']
+    //     return caller.invokeMethodAsync('registerClient')
+    //       .then(isAvailable => {
+    //         if (isAvailable) {
+    //           caller.invokeMethodAsync("onupdateavailable").then(r => console.log(r));
+    //         }
+    //       });
+    //   }
+    // };
+
+
+    // window.updateAvailable = new Promise(function (resolve, reject) {
+    //   if ('serviceWorker' in navigator) {
+    //     navigator.serviceWorker.register('/service-worker.js')
+    //       .then(function (registration) {
+    //         console.log('Registration successful, scope is:', registration.scope);
+    //         registration.onupdatefound = () => {
+    //           const installingWorker = registration.installing;
+    //           installingWorker.onstatechange = () => {
+    //             switch (installingWorker.state) {
+    //               case 'installed':
+    //                 if (navigator.serviceWorker.controller) {
+    //                   resolve(true);
+    //                 } else {
+    //                   resolve(false);
+    //                 }
+    //                 break;
+    //               default:
+    //             }
+    //           };
+    //         };
+    //       })
+    //       .catch(error =>
+    //         console.log('Service worker registration failed, error:', error));
+    //   }
+    // });

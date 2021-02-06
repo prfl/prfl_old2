@@ -1,5 +1,6 @@
 // Caution! Be sure you understand the caveats before publishing an application with
 // offline support. See https://aka.ms/blazor-offline-considerations
+const CACHE_VERSION = 1;
 
 self.importScripts('./service-worker-assets.js');
 self.addEventListener('install', event => event.waitUntil(onInstall(event)));
@@ -26,14 +27,6 @@ async function onInstall(event) {
     await caches.open(cacheName).then(cache => cache.addAll(assetsRequests));
 }
 
-self.addEventListener('install', event => {
-  self.skipWaiting();
-  event.waitUntil(
-    caches.open(cacheName).then(function (cache) {
-      return cache.addAll(assetsRequests);
-    })
-  );
-});
 
 async function onActivate(event) {
     console.info('Service worker: Activate');
@@ -45,7 +38,7 @@ async function onActivate(event) {
         .map(key => caches.delete(key)));
 }
 
-async function onFetch(event) {
+async function onFxetch(event) {
     let cachedResponse = null;
     if (event.request.method === 'GET') {
         // For all navigation requests, try to serve index.html from cache
