@@ -2,14 +2,17 @@
 
 
   
-  <div class="my-3 p-3 rounded shadow" >
+  <div class="my-2 p-3 py-1 rounded shadow" >
     <div class="row">
-
-      <div class="col-2">
+      <div class="col-1 border-end">
+        <div class="col"><a type="button" @onclick="@OnClickUpCallback"><i class="bi bi-caret-up" ></i></a></div>
+        <div class="col"><a type="button"@onclick="@OnClickDownCallback"><i class="bi bi-caret-down"></i></a></div>
+      </div>
+      <div class="col-2 pt-2">
         <img src="@IconUrl" height="26px" width="26px"/>
       </div>
 
-      <div class="col-8">
+      <div class="col-7 pt-2">
           <a data-bs-toggle="modal" data-bs-target="#@ModalId"><strong class="d-block text-gray-dark" >@Name</strong></a>
 
             <!-- Modal -->
@@ -32,13 +35,13 @@
       </div>
       
 
-      <div class="col-1">
+      <div class="col-1 pt-2">
           @if(IsFavorite == true) {
           <img class="float-right" src="/assets/icons/star-fill.svg" height="20px" width="20px"/>
         }
       </div>
 
-      <div class="col-1">
+      <div class="col-1 pt-2">
         <div class="dropdown">
           <a class="float-right" data-bs-toggle="dropdown" href="#"  aria-expanded="false" id="dropdownMenuLink">
               <img src="/assets/icons/menu.svg" height="20px" width="20px">
@@ -72,4 +75,6 @@
       [Parameter] public string EditLink { get; set; }
       [Parameter] public string RemoveMenuName { get; set; }
       [Parameter] public EventCallback Remove { get; set; }
+      [Parameter] public EventCallback<MouseEventArgs> OnClickUpCallback { get; set; }
+      [Parameter] public EventCallback<MouseEventArgs> OnClickDownCallback { get; set; }
   }

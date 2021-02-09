@@ -207,7 +207,9 @@ else if(linkType.ToUpper() == "FAVORITE") {
                             Username="@Account.Username" 
                             UserLink="@userLink"
                             EditLink="@editLink"
-                            Remove="(() => DeleteLink(favorite.FavoriteId, linkType, favorite.Name))"/>
+                            Remove="(() => DeleteLink(favorite.FavoriteId, linkType, favorite.Name))"
+                            OnClickUpCallback="(() => OnClickUpAsync(favorite.FavoriteId, linkType))"
+                            OnClickDownCallback="(() => OnClickDownAsync(favorite.FavoriteId, linkType))"/>
           </div>
         }
 
@@ -223,7 +225,9 @@ else if(linkType.ToUpper() == "FAVORITE") {
                       IsFavorite="@true"
                       RemoveMenuName="Remove Favorite"
                       EditLink="@editLink"
-                      Remove="(() => DeleteLink(favorite.FavoriteId, linkType, favorite.Name))"/>
+                      Remove="(() => DeleteLink(favorite.FavoriteId, linkType, favorite.Name))"
+                      OnClickUpCallback="(() => OnClickUpAsync(favorite.FavoriteId, linkType))"
+                      OnClickDownCallback="(() => OnClickDownAsync(favorite.FavoriteId, linkType))"/>
           </div>
         }
 
@@ -246,11 +250,8 @@ else if(linkType.ToUpper() == "FAVORITE") {
     private Account Account { get; set; }
     
 
-    protected override async Task OnInitializedAsync() {
-        
+    protected override async Task OnParametersSetAsync() {
         await GetData(linkType);
-
-
     }
 
     private async Task GetData(string linkType) {
@@ -290,22 +291,42 @@ else if(linkType.ToUpper() == "FAVORITE") {
       Account = Accounts.FirstOrDefault(a => a.AccountId == accountId);
     }
 
-    private async Task DeleteLink(string linkId, string linkType, string linkName) {
-        
+    private async Task DeleteLink(string linkId, string linkType, string linkName) { 
         bool isConfirmed = await jsRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete your {linkType} {linkName}?");
         if(isConfirmed) {
             await client.DeleteAsync($"api/{linkType}/{linkId}");
             await OnInitializedAsync();
         }
+    }
+
         
+    private async Task OnClickUpAsync(string linkId, string linkType) {         
+        if(linkType.ToUpper() == "FAVORITE") {
+            var link = Favorites.FirstOrDefault(f => f.FavoriteId == linkId);
+            if(link != null && link.Order > 1) {
+                var otherLink = Favorites.FirstOrDefault(f => f.Order ==  link.Order - 1);
+                link.Order -= 1;
+                otherLink.Order += 1;
+                await client.PutAsJsonAsync($"api/{linkType}/{link.FavoriteId}", link);
+                await client.PutAsJsonAsync($"api/{linkType}/{otherLink.FavoriteId}", otherLink);
+                await OnInitializedAsync();
+            }  
+        }
     }
-
+    private async Task OnClickDownAsync(string linkId, string linkType) {         
+        if(linkType.ToUpper() == "FAVORITE") {
+            var link = Favorites.FirstOrDefault(f => f.FavoriteId == linkId);
+            if(link != null && link.Order < Favorites.Count()) {
+                var otherLink = Favorites.FirstOrDefault(f => f.Order ==  link.Order + 1);
+                link.Order += 1;
+                otherLink.Order -= 1;
+                await client.PutAsJsonAsync($"api/{linkType}/{link.FavoriteId}", link);
+                await client.PutAsJsonAsync($"api/{linkType}/{otherLink.FavoriteId}", otherLink);
+                await OnInitializedAsync();
+            }  
+        }
+    }
     
-
-    protected override async Task OnParametersSetAsync()
-    {
-        await OnInitializedAsync();
-    }
     
     
 }
