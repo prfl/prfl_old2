@@ -39,6 +39,7 @@ namespace Profile.Shared.Models
         public string Description { get; set; }
         public string Url { get; set; }
         public string IconUrl { get; set; }
+        public int Order { get; set; }
         
     }
 }

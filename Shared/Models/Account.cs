@@ -33,5 +33,6 @@ namespace Profile.Shared.Models
         public string Username { get; set; }
 
         public bool IsFavorite { get; set; }
+        public int Order { get; set; }
     }
 }
