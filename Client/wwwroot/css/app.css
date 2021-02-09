@@ -19,7 +19,6 @@ a, .btn-link {
     flex: 1;
     flex-direction: column;
     -webkit-box-pack: justify;
-    justify-content: space-between;
     height: 100%;
     width: 100%;
     display: flex;
