@@ -31,7 +31,7 @@ namespace Profile.Server.Controllers
         public async Task<ActionResult<IEnumerable<Favorite>>> GetFavorite()
         {
             var userId = _userManager.GetUserId(User);
-            return await _context.Favorite.Where(f => f.ProfileUserId == userId).ToListAsync();
+            return await _context.Favorite.Where(f => f.ProfileUserId == userId).OrderBy(f => f.Order).ToListAsync();
         }
 
         // GET: api/Account/u/{username}
@@ -39,7 +39,7 @@ namespace Profile.Server.Controllers
         public async Task<ActionResult<IEnumerable<Favorite>>> GetFavoriteByUsername(string username)
         {
             //var user = await _userManager.FindByNameAsync(username);
-            return await _context.Favorite.Include(f => f.ProfileUser).Where(a => a.ProfileUser.UserName == username).ToListAsync();
+            return await _context.Favorite.Include(f => f.ProfileUser).Where(a => a.ProfileUser.UserName == username).OrderBy(f => f.Order).ToListAsync();
         }
 
         // GET: api/Favorite/5
@@ -100,12 +100,21 @@ namespace Profile.Server.Controllers
 
             return NoContent();
         }
+        
+
 
         // POST: api/Favorite
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Favorite>> PostFavorite(Favorite favorite)
+        public async Task<ActionResult<Favorite>> PostFavorite(Favorite favorite, string userId)
         {
+            if(userId == null) {
+                userId = _userManager.GetUserId(User);
+            }
+            
+            var lastFavorite = await _context.Favorite.OrderBy(f => f.Order).LastOrDefaultAsync(f => f.ProfileUserId == userId);
+            favorite.Order = lastFavorite.Order + 1;
+
             _context.Favorite.Add(favorite);
             await _context.SaveChangesAsync();
 
@@ -116,6 +125,7 @@ namespace Profile.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFavorite(string id)
         {
+            var userId = _userManager.GetUserId(User);
             var favorite = await _context.Favorite.FindAsync(id);
 
             if(favorite.Type == LinkType.Account) {
@@ -139,6 +149,14 @@ namespace Profile.Server.Controllers
             if (favorite == null)
             {
                 return NotFound();
+            }
+
+            // Reorder the other favorites
+            var favorites = await _context.Favorite.Where(f => f.ProfileUserId == userId && f.Order > favorite.Order).OrderBy(f => f.Order).ToListAsync();
+
+            foreach(var item in favorites) {
+                item.Order -= 1;
+                await PutFavorite(item.FavoriteId, item);
             }
 
             _context.Favorite.Remove(favorite);
