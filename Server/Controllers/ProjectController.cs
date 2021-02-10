@@ -95,7 +95,7 @@ namespace Profile.Server.Controllers
                         Url = project.Url,
                         IconUrl = "/assets/icons/kanban.svg",
                     };
-                    await favoriteController.PostFavorite(newFavorite);
+                    await favoriteController.PostFavorite(newFavorite, userId);
                 }
 
                 else if(favorite != null && project.IsFavorite == true) {

@@ -93,7 +93,7 @@ namespace Profile.Server.Controllers
                         Url = schedule.Url,
                         IconUrl = "/assets/icons/kanban.svg",
                     };
-                    await favoriteController.PostFavorite(newFavorite);
+                    await favoriteController.PostFavorite(newFavorite, userId);
                 }
 
                 else if(favorite != null && schedule.IsFavorite == true) {
