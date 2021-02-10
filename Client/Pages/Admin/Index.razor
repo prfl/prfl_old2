@@ -295,7 +295,7 @@ else if(linkType.ToUpper() == "FAVORITE") {
         bool isConfirmed = await jsRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete your {linkType} {linkName}?");
         if(isConfirmed) {
             await client.DeleteAsync($"api/{linkType}/{linkId}");
-            await OnInitializedAsync();
+            await OnParametersSetAsync();
         }
     }
 
@@ -309,7 +309,7 @@ else if(linkType.ToUpper() == "FAVORITE") {
                 otherLink.Order += 1;
                 await client.PutAsJsonAsync($"api/{linkType}/{link.FavoriteId}", link);
                 await client.PutAsJsonAsync($"api/{linkType}/{otherLink.FavoriteId}", otherLink);
-                await OnInitializedAsync();
+                await OnParametersSetAsync();
             }  
         }
     }
@@ -322,7 +322,7 @@ else if(linkType.ToUpper() == "FAVORITE") {
                 otherLink.Order -= 1;
                 await client.PutAsJsonAsync($"api/{linkType}/{link.FavoriteId}", link);
                 await client.PutAsJsonAsync($"api/{linkType}/{otherLink.FavoriteId}", otherLink);
-                await OnInitializedAsync();
+                await OnParametersSetAsync();
             }  
         }
     }
