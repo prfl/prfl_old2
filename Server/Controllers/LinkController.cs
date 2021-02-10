@@ -92,7 +92,7 @@ namespace Profile.Server.Controllers
                         Url = link.Url,
                         IconUrl = "/assets/icons/link.svg",
                     };
-                    await favoriteController.PostFavorite(newFavorite);
+                    await favoriteController.PostFavorite(newFavorite, userId);
                 }
                 else if(favorite != null && link.IsFavorite == true) {
                     favorite.ModifedOn = DateTime.Now;

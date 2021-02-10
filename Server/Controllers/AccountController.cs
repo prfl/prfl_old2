@@ -94,7 +94,7 @@ namespace Profile.Server.Controllers
                         Url = application.ApplicationUserLink + account.Username,
                         IconUrl = $"/assets/Logo/{application.Name}.svg",
                     };
-                    await favoriteController.PostFavorite(newFavorite);
+                    await favoriteController.PostFavorite(newFavorite, userId);
                 }
 
                 else if(favorite != null && account.IsFavorite == true) {
@@ -131,6 +131,8 @@ namespace Profile.Server.Controllers
             _context.Account.Add(account);
             await _context.SaveChangesAsync();
 
+            var favoriteController = new FavoriteController(_context, _userManager);
+
             var application = await _context.Application.FirstOrDefaultAsync(a => a.ApplicationId == account.ApplicationId);
 
             if(account.IsFavorite == true) {
@@ -143,8 +145,8 @@ namespace Profile.Server.Controllers
                     Url = application.ApplicationUserLink + account.Username,
                     IconUrl = $"/assets/Logo/{application.Name}.svg",
                 };
-                _context.Favorite.Add(favorite);
-                await _context.SaveChangesAsync();
+
+                await favoriteController.PostFavorite(favorite, userId);
             }
 
             return CreatedAtAction("GetAccount", new { id = account.AccountId }, account);

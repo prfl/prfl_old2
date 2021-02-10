@@ -92,7 +92,7 @@ namespace Profile.Server.Controllers
                         Url = video.Url,
                         IconUrl = "/assets/icons/video.svg",
                     };
-                    await favoriteController.PostFavorite(newFavorite);
+                    await favoriteController.PostFavorite(newFavorite, userId);
                 }
 
                 else if(favorite != null && video.IsFavorite == true) {
