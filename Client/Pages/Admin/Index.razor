@@ -3,26 +3,15 @@
 @using Profile.Client.Components.Admin
 @using Profile.Client.Components.Prfl
 @using Profile.Shared.Models
-@inject HttpClient client
-@inject IJSRuntime jsRuntime
 @layout AppLayout
 @using Microsoft.AspNetCore.Authorization
-@inject IJSRuntime JSRuntime
 @attribute [Authorize]
+@inherits IndexBase
 
 <Title Value="@linkType" />
 
 
-<div class="row mt-2">
-  <div class="col">
-    <a href="/admin/link/choose-type" class="btn btn-primary mb-2 float-left">Add Link</a>
-  </div>
-  @if(!String.IsNullOrEmpty(username)) {
-    <div class="col">
-        <a href="./@username" class="badge bg-primary mt-2 float-end">prfl.ga/@username</a>
-    </div>
-    }
-</div>
+<AdminHeader />
 
 
 @if(linkType.ToUpper() == "ACCOUNT") {
@@ -236,97 +225,3 @@ else if(linkType.ToUpper() == "FAVORITE") {
 }
 
 
-
-@code {
-    [Parameter] public string username { get; set; }
-    [Parameter] public string linkType { get; set; }
-    private int Count = 1;
-    private Link[] Links { get; set; }
-    private Account[] Accounts { get; set; }
-    private Project[] Projects { get; set; }
-    private Video[] Videos { get; set; }
-    private Favorite[] Favorites { get; set; }
-    private Schedule[] Schedules { get; set; }
-    private Account Account { get; set; }
-    
-
-    protected override async Task OnParametersSetAsync() {
-        await GetData(linkType);
-    }
-
-    private async Task GetData(string linkType) {
-
-        var user = await client.GetFromJsonAsync<ProfileUser>("api/user");
-        username = user.UserName;
-        
-        if(linkType.ToUpper() == "LINK") {
-            Links = await client.GetFromJsonAsync<Link[]>($"api/{linkType}");
-        }
-        else if(linkType.ToUpper() == "ACCOUNT") {
-            Accounts = await client.GetFromJsonAsync<Account[]>($"api/{linkType}");
-        }
-        else if(linkType.ToUpper() == "PROJECT") {
-            Projects = await client.GetFromJsonAsync<Project[]>($"api/{linkType}");
-        }
-        else if(linkType.ToUpper() == "VIDEO") {
-            Videos = await client.GetFromJsonAsync<Video[]>($"api/{linkType}");
-        }
-        else if(linkType.ToUpper() == "FAVORITE") {
-            Favorites = await client.GetFromJsonAsync<Favorite[]>($"api/{linkType}");
-            Accounts = await client.GetFromJsonAsync<Account[]>($"api/account");
-        }
-        else if(linkType.ToUpper() == "SCHEDULE") {
-            Schedules = await client.GetFromJsonAsync<Schedule[]>($"api/{linkType}");
-        }
-        
-    }
-
-    private string GetModalId()
-    {
-        var num = Count++;
-        return "modal" + num;
-    }
-
-    private void SetAccount(string accountId){ 
-      Account = Accounts.FirstOrDefault(a => a.AccountId == accountId);
-    }
-
-    private async Task DeleteLink(string linkId, string linkType, string linkName) { 
-        bool isConfirmed = await jsRuntime.InvokeAsync<bool>("confirm", $"Are you sure you want to delete your {linkType} {linkName}?");
-        if(isConfirmed) {
-            await client.DeleteAsync($"api/{linkType}/{linkId}");
-            await OnParametersSetAsync();
-        }
-    }
-
-        
-    private async Task OnClickUpAsync(string linkId, string linkType) {         
-        if(linkType.ToUpper() == "FAVORITE") {
-            var link = Favorites.FirstOrDefault(f => f.FavoriteId == linkId);
-            if(link != null && link.Order > 1) {
-                var otherLink = Favorites.FirstOrDefault(f => f.Order ==  link.Order - 1);
-                link.Order -= 1;
-                otherLink.Order += 1;
-                await client.PutAsJsonAsync($"api/{linkType}/{link.FavoriteId}", link);
-                await client.PutAsJsonAsync($"api/{linkType}/{otherLink.FavoriteId}", otherLink);
-                await OnParametersSetAsync();
-            }  
-        }
-    }
-    private async Task OnClickDownAsync(string linkId, string linkType) {         
-        if(linkType.ToUpper() == "FAVORITE") {
-            var link = Favorites.FirstOrDefault(f => f.FavoriteId == linkId);
-            if(link != null && link.Order < Favorites.Count()) {
-                var otherLink = Favorites.FirstOrDefault(f => f.Order ==  link.Order + 1);
-                link.Order += 1;
-                otherLink.Order -= 1;
-                await client.PutAsJsonAsync($"api/{linkType}/{link.FavoriteId}", link);
-                await client.PutAsJsonAsync($"api/{linkType}/{otherLink.FavoriteId}", otherLink);
-                await OnParametersSetAsync();
-            }  
-        }
-    }
-    
-    
-    
-}
