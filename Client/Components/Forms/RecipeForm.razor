@@ -1,0 +1,65 @@
+@using Profile.Shared.Models
+
+
+<EditForm Model="@Recipe" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+
+    <div class="row">
+        <div class="col">
+            <div class="form-group mb-3">
+            <label class="control-label">Type</label>
+            <select class ="form-control" @bind="@Recipe.Type">
+                <option value="@RecipeType.Food">Food</option>     
+                <option value="@RecipeType.Beverage">Beverage</option> 
+            </select>
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">Name</label>
+                <InputText class="form-control" @bind-Value="@Recipe.Name" />
+                <ValidationMessage For="@(() => Recipe.Name)" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">Origin</label>
+                <InputText class="form-control" @bind-Value="@Recipe.Origin" />
+                <ValidationMessage For="@(() => Recipe.Origin)" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">Description</label>
+                <InputTextArea class="form-control" @bind-Value="@Recipe.Description" />
+                <ValidationMessage For="@(() => Recipe.Description)" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">Instruction</label>
+                <InputTextArea class="form-control" @bind-Value="@Recipe.Instruction" />
+                <ValidationMessage For="@(() => Recipe.Instruction)" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">Recipe URL</label>
+                <InputText class="form-control" @bind-Value="@Recipe.Url" placeholder="https://example.com/Recipe/123"/>
+                <ValidationMessage For="@(() => Recipe.Url)" />
+            </div>
+            <div class="form-check form-switch mb-3">
+                <InputCheckbox class="form-check-input" type="checkbox" id="flexCheckDefault" @bind-Value="@Recipe.IsFavorite" />
+                <label class="form-check-label" for="flexCheckDefault">Add to favorites</label>
+                <ValidationMessage For="@(() => Recipe.IsFavorite)" />
+            </div>
+        </div>
+    </div>
+
+
+
+    
+    <button type="submit" class="btn btn-success">
+        @ButtonText
+    </button>
+
+</EditForm>
+
+
+
+@code {
+    [Parameter] public Recipe Recipe { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Create";
+    [Parameter] public string SecondButtonText { get; set; } = "Create";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+}
