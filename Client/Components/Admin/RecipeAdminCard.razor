@@ -1,0 +1,104 @@
+@using Profile.Shared.Models
+@inherits Profile.Components.HtmlHelper
+
+
+  
+  <div class="my-2 p-3 py-1 rounded shadow" >
+    <div class="row">
+      <div class="col-1 border-end">
+        <div class="col"><a type="button" @onclick="@OnClickUpCallback"><i class="bi bi-caret-up" ></i></a></div>
+        <div class="col"><a type="button"@onclick="@OnClickDownCallback"><i class="bi bi-caret-down"></i></a></div>
+      </div>
+      <div class="col-2 pt-2">
+          @if(Recipe.Type == RecipeType.Food) {
+              <img src="assets/icons/food.svg" height="26px" width="26px"/>
+          }
+          else {
+              <img src="assets/icons/alcohol.svg" height="26px" width="26px"/>
+          }
+        
+      </div>
+
+      <div class="col-7 pt-2">
+          <a data-bs-toggle="modal" data-bs-target="#@ModalId"><strong class="d-block text-gray-dark" @onclick="GetIngredients">@Recipe.Name</strong></a>
+
+            <!-- Modal -->
+            <div class="modal fade" id="@ModalId" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">@Recipe.Name</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    @if(!String.IsNullOrEmpty(Recipe.Description)) {
+                      <h4 class="mb-1">Description</h4>
+                      <div class="mb-2">
+                        @RenderMultiline(Recipe.Description)
+                      </div>
+                    }
+                    @if(!String.IsNullOrEmpty(Recipe.Instruction)) {
+                      <h4 class="mb-1">Instruction</h4>
+                      <div class="mb-2">
+                        @RenderMultiline(Recipe.Instruction)
+                      </div>
+                    }
+                    @if(Ingredients != null) {
+                      <h4 class="mb-2">Ingredients</h4>
+                      <ul class="list-group mb-2">
+                          @foreach (var item in Ingredients.OrderBy(i => i.Order))
+                          {
+                              <li class="list-group-item">@item.Quantity @item.Measure of <strong>@item.Name</strong></li>
+                          }
+                      </ul>
+                    }
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+      </div>
+      
+
+      <div class="col-1 pt-2">
+          @if(Recipe.IsFavorite == true) {
+          <img class="float-right" src="/assets/icons/star-fill.svg" height="20px" width="20px"/>
+        }
+      </div>
+
+      <div class="col-1 pt-2">
+        <div class="dropdown">
+          <a class="float-right" data-bs-toggle="dropdown" href="#"  aria-expanded="false" id="dropdownMenuLink">
+              <img src="/assets/icons/menu.svg" height="20px" width="20px">
+          </a>
+
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <li><a class="dropdown-item" href="@(Recipe.Url)">Open</a></li>
+            <li><a class="dropdown-item" href='@($"/admin/recipe/edit/{Recipe.RecipeId}")'>Edit</a></li>
+            <li><a class="dropdown-item" href='@($"/admin/recipe/{Recipe.RecipeId}/ingredients")'>Ingredients</a></li>
+            <li><a class="dropdown-item" @onclick="Delete">Delete</a></li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+
+  
+
+
+
+
+  @code {
+      [Parameter] public string ModalId { get; set; }
+      [Parameter] public Recipe Recipe { get; set; }
+      [Parameter] public Ingredient[] Ingredients { get; set; }
+      [Parameter] public EventCallback Delete { get; set; }
+      [Parameter] public EventCallback<MouseEventArgs> OnClickUpCallback { get; set; }
+      [Parameter] public EventCallback<MouseEventArgs> OnClickDownCallback { get; set; }
+      [Parameter] public EventCallback<MouseEventArgs> GetIngredients { get; set; }
+  }
