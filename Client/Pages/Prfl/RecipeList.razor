@@ -1,0 +1,92 @@
+@page "/{username}/recipes"
+@page "/{username}/cocktails"
+@using Profile.Client.Components
+@using Profile.Client.Components.Prfl
+@using Profile.Shared.Models
+@inject Services.StateContainer StateContainer
+@inject IHttpClientFactory ClientFactory
+@inject HttpClient client
+@layout MainLayout
+
+<Title Value="@username" />
+
+@if(Recipes == null) {
+    <div>
+        <Loading />
+    </div>
+    
+}
+else if(Recipes.Length == 0) {
+    <div class="alert alert-info mt-3" role="alert">
+        The user does not have any recipes yet.
+    </div>
+
+}
+else {
+    @foreach(var recipe in Recipes) {
+        var modalId = GetModalId();
+        <div>
+            <RecipeCard   ModalId="@modalId" Recipe="@recipe" Ingredients="@Ingredients" GetIngredients="(() => GetIngredients(recipe.RecipeId))"/>
+        </div>
+        
+    }
+}
+
+ 
+
+
+
+@code {
+    [Parameter] public string username { get; set; }
+    private Recipe[] Recipes { get; set; }
+    public Ingredient[] Ingredients { get; set; }
+
+    private User User { get; set; }
+
+    private int Count = 1;
+
+    protected override async Task OnInitializedAsync() {
+        ChangePropertyValue();
+        ChangeIconValue();
+
+        var client = ClientFactory.CreateClient("ServerAPI.NoAuthenticationClient");
+
+        User = await client.GetFromJsonAsync<User>($"api/user/u/{username}");
+        Recipes = await client.GetFromJsonAsync<Recipe[]>($"api/Recipe/u/{username}");
+
+        
+        StateContainer.OnChange += StateHasChanged;
+    }
+
+    private void ChangePropertyValue()
+    {
+        StateContainer.SetProperty(username);
+    }
+
+
+    public void Dispose()
+    {
+        StateContainer.OnChange -= StateHasChanged;
+    }
+
+    private void ChangeIconValue()
+    {
+        StateContainer.SetAccountIcon("/assets/icons/account.svg");
+        StateContainer.SetLinkIcon("/assets/icons/link-fill-ns.svg");
+        StateContainer.SetFavoriteIcon("/assets/icons/star.svg");
+        StateContainer.SetProjectIcon("/assets/icons/kanban.svg");
+        StateContainer.SetVideoIcon("/assets/icons/video.svg");
+        StateContainer.SetChefIcon("/assets/icons/food-fill.svg");
+        StateContainer.SetBartenderIcon("/assets/icons/alcohol-fill.svg");
+    }
+    private string GetModalId()
+    {
+        var num = Count++;
+        return "modal" + num;
+    }
+
+    public async Task GetIngredients(string recipeId) {
+        Ingredients = await client.GetFromJsonAsync<Ingredient[]>($"api/ingredient/recipe/{recipeId}");
+        StateHasChanged();
+    }
+}
