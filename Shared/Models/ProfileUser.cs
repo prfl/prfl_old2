@@ -12,7 +12,9 @@ namespace Profile.Shared.Models
         Creator,
         Developer,
         Analyst,
-        Artist
+        Artist,
+        Chef,
+        Bartender
     }
 
     public class ProfileUser : IdentityUser
@@ -25,6 +27,5 @@ namespace Profile.Shared.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public ProfileUserType ProfileUserType { get; set; }
-        public int Order { get; set; }
     }
 }
