@@ -1,0 +1,13 @@
+<div class="row mt-2">
+  <div class="col">
+    <a href="/admin/link/choose-type" class="btn btn-primary mb-2 float-left">Add Link</a>
+  </div>
+    <div class="col">
+        <AuthorizeView>
+            <Authorized>
+                <a href="./@(context.User.Identity.Name)" class="badge bg-primary mt-2 float-end">prfl.ga/@context.User.Identity.Name</a>
+            </Authorized>
+        </AuthorizeView>
+        
+    </div>
+</div>
