@@ -22,13 +22,26 @@
         </NavLink>
     </div>
     @if(User != null && User.ProfileUserType == ProfileUserType.Trainer) {
-
         <div class="col">
             <NavLink class="nav-link" href="@scheduleUrl"  Match="NavLinkMatch.All">
                 <img src="@scheduleIcon" >
             </NavLink>
         </div>
         
+    }
+    else if(User != null && User.ProfileUserType == ProfileUserType.Chef) {
+        <div class="col">
+            <NavLink class="nav-link" href='@($"{StateContainer.Username}/recipes")' Match="NavLinkMatch.All">
+                <img src='@($"{StateContainer.ChefIconUrl}")' >
+            </NavLink>
+        </div>
+    }
+    else if(User != null && User.ProfileUserType == ProfileUserType.Bartender) {
+        <div class="col">
+            <NavLink class="nav-link" href='@($"{StateContainer.Username}/cocktails")' Match="NavLinkMatch.All">
+                <img src='@($"{StateContainer.BartenderIconUrl}")' >
+            </NavLink>
+        </div>
     }
     else {
         <div class="col">
@@ -64,6 +77,8 @@
     private string projectIcon =>  StateContainer.ProjectIconUrl != null ? $"{StateContainer.ProjectIconUrl}" : "/assets/icons/kanban.svg";
     private string videoIcon =>  StateContainer.VideoIconUrl != null ? $"{StateContainer.VideoIconUrl}" : "/assets/icons/video.svg";
     private string scheduleIcon =>  StateContainer.ScheduleIconUrl != null ? $"{StateContainer.ScheduleIconUrl}" : "/assets/icons/calendar2.svg";
+    //private string chefIcon =>  StateContainer.ScheduleIconUrl != null ? $"{StateContainer.ScheduleIconUrl}" : "/assets/icons/food.svg";
+    //private string bartenderIcon =>  StateContainer.ScheduleIconUrl != null ? $"{StateContainer.ScheduleIconUrl}" : "/assets/icons/alcohol.svg";
 
     public User User { get; set; }
 
