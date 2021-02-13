@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Profile.Server.Data;
 using Profile.Shared.Models;
+using Profile.Shared.Models.Admin;
 
 namespace Profile.Server.Controllers
 {

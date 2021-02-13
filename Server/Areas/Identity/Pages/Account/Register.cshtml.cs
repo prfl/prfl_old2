@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Profile.Server.Data;
 using Profile.Shared.Models;
+using Profile.Shared.Models.Admin;
 using Profile.Shared.Models.Codgram;
 
 namespace Profile.Server.Areas.Identity.Pages.Account

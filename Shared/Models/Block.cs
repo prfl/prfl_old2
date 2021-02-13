@@ -1,16 +1,12 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Profile.Shared.Models.Admin;
 
 namespace Profile.Shared.Models
 {
 
-    public class Account
+    public class Block
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string AccountId { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime CreatedOn { get; set; } = DateTime.Now;
@@ -22,13 +18,11 @@ namespace Profile.Shared.Models
         public ProfileUser ProfileUser { get; set; }
 
         [Required]
-        public string ApplicationId { get; set; }
-        public Application Application { get; set; }
-        
-        [Required]
-        public string Username { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
 
         public bool IsFavorite { get; set; }
         public int Order { get; set; }
+        
     }
 }
