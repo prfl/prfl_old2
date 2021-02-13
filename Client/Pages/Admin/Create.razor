@@ -1,4 +1,4 @@
-@page "/admin/link/create/{linkType}"
+@page "/admin/{linkType}/create/"
 @using Profile.Client.Components.Forms
 @using Profile.Client.Components.Prfl
 @using Profile.Shared.Models.Admin
@@ -12,6 +12,7 @@
 @{
     string title = $"Create - {linkType}";
 }
+
 <Title Value="@title" />
 
 <h3 class="display-3">Create a new <strong class="text-primary">@linkType</strong></h3>
@@ -45,6 +46,11 @@
             <ScheduleForm Schedule="@Schedule" OnValidSubmit="@CreateSchedule"/>
         </div>
     }
+    else if(linkType.ToUpper() == "RECIPE" || linkType.ToUpper() == "COCKTAIL") {
+        <div>
+            <RecipeForm Recipe="@Recipe" OnValidSubmit="CreateRecipe" />
+        </div>
+    }
 
 
 </div>
@@ -59,10 +65,13 @@
     private Link Link = new Link();
     private Video Video = new Video();
     private Schedule Schedule = new Schedule();
+    private Recipe Recipe = new Recipe();
 
 
     protected override async Task OnInitializedAsync() {
-        Applications = await client.GetFromJsonAsync<Application[]>("api/application");
+        if(linkType.ToUpper() == "ACCOUNT") {
+            Applications = await client.GetFromJsonAsync<Application[]>("api/application");
+        }
     }
     private async Task CreateProject() {
         await client.PostAsJsonAsync("api/project", Project);
@@ -88,6 +97,12 @@
     private async Task CreateSchedule() {
         await client.PostAsJsonAsync("api/schedule", Schedule);
         NavigationManager.NavigateTo("admin/schedule");
+    }
+    
+    private async Task CreateRecipe() {
+        var response = await client.PostAsJsonAsync("api/recipe", Recipe);
+        var recipe = response.Content.ReadFromJsonAsync<Recipe>();
+        NavigationManager.NavigateTo($"admin/recipe/{recipe.Result.RecipeId}/ingredients");
     }
 
 }
