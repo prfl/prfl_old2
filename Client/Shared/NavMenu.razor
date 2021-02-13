@@ -66,6 +66,12 @@
                         <span class="oi oi-video" aria-hidden="true"></span> Videos
                     </NavLink>
                 </li>
+                <li><hr class="dropdown-divider text-light"></li>
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" @onclick='@(() => Navigate("support"))' Match="NavLinkMatch.All">
+                         Support
+                    </NavLink>
+                </li>
             </Authorized>
         </AuthorizeView>
     </ul>
@@ -92,6 +98,5 @@
         if(Username != null) {
             User = await client.GetFromJsonAsync<User>($"api/user/u/{Username}");
         }
-        
     }
 }
