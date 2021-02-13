@@ -1,0 +1,97 @@
+@using Profile.Shared.Models.Admin
+@using Profile.Shared.Models
+@inherits Profile.Components.HtmlHelper
+@inject HttpClient client
+
+
+<div class="my-3 p-3 rounded shadow bg-white">
+  <div class="row">
+
+    <div class="col-1">
+      @if(Recipe.Type == RecipeType.Food) {
+        <img src="/assets/icons/food.svg" />
+      }
+      else {
+        <img src="/assets/icons/food.alcohol" />
+      }
+      
+    </div>
+    @if(Recipe.IsFavorite == true) {
+      col = "col-8";
+    }
+    else {
+      col = "col-9";
+    }
+    <div class="@col ml-3">
+      <a href="@Recipe.Url">
+        <strong class="d-block text-gray-dark">@Recipe.Name</strong>
+      </a>
+    </div>
+
+    @if (Recipe.IsFavorite == true)
+          {
+      <div class="col-1">
+        
+          <img src="/assets/icons/star-fill.svg" height="20px" width="20px" />
+        
+      </div>
+    }
+    <div class="col-1">
+      
+
+      <a data-bs-toggle="modal" data-bs-target="#@ModalId" @onclick="GetIngredients"><img src="/assets/icons/info-circle-outline.svg"/></a>
+
+      <!-- Modal -->
+      <div class="modal fade" id="@ModalId" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">@Recipe.Name</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              @if(!String.IsNullOrEmpty(Recipe.Description)) {
+                <h4 class="mb-1">Description</h4>
+                <div class="mb-2">
+                  @RenderMultiline(Recipe.Description)
+                </div>
+                
+              }
+              @if(!String.IsNullOrEmpty(Recipe.Instruction)) {
+                <h4 class="mb-1">Instruction</h4>
+                <div class="mb-2">
+                  @RenderMultiline(Recipe.Instruction)
+                </div>
+              }
+              @if(Ingredients != null) {
+                <h4 class="mb-2">Ingredients</h4>
+                <ul class="list-group mb-2">
+                    @foreach (var item in Ingredients.OrderBy(i => i.Order))
+                    {
+                        <li class="list-group-item">@item.Quantity @item.Measure of <strong>@item.Name</strong></li>
+                    }
+                </ul>
+              }
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+  </div>
+</div>
+
+
+@code {
+  [Parameter] public string ModalId { get; set; }
+  [Parameter] public Recipe Recipe { get; set; }
+  [Parameter] public Ingredient[] Ingredients { get; set; }
+
+  [Parameter] public EventCallback<MouseEventArgs> GetIngredients { get; set; }
+  public string col { get; set; }
+
+}

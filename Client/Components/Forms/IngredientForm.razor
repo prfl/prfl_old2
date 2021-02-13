@@ -1,0 +1,58 @@
+@using Profile.Shared.Models
+
+
+<EditForm Model="@Ingredient" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+
+    <div class="row">
+        <div class="col"> 
+            <div class="form-group mb-3">
+                <label class="control-label">Name</label>
+                <InputText class="form-control" @bind-Value="@Ingredient.Name" />
+                <ValidationMessage For="@(() => Ingredient.Name)" />
+            </div>
+            <div class="form-group mb-3">
+            <label class="control-label">Measure</label>
+            <select class ="form-control" @bind="Ingredient.Measure">
+                <option value="" disabled selected>Select ...</option>
+                <option value="@Measure.Piece">piece</option>     
+                <option value="@Measure.Cups">cup</option>     
+                <option value="@Measure.Dashe">dashe</option>     
+                <option value="@Measure.Pinche">piche</option>     
+                <option value="@Measure.Tablespoon">tablespoon</option>     
+                <option value="@Measure.Teaspoon">teaspoon</option>     
+                <option value="@Measure.Drop">drop</option>     
+                <option value="@Measure.Gallon">gallon</option>     
+                <option value="@Measure.Pint">pint</option>     
+                <option value="@Measure.Quart">quart</option>     
+                <option value="@Measure.Ounce">oz</option>     
+                <option value="@Measure.Milligram">mg</option>     
+                <option value="@Measure.Gram">g</option>     
+                <option value="@Measure.Kilogram">kg</option>     
+                <option value="@Measure.Milligram">ml</option>     
+                <option value="@Measure.Liter">l</option>      
+            </select>
+            </div>
+            <div class="form-group mb-3">
+                <label class="control-label">Quantity</label>
+                <InputNumber class="form-control" @bind-Value="@Ingredient.Quantity" />
+                <ValidationMessage For="@(() => Ingredient.Quantity)" />
+            </div>
+
+        </div>
+    </div>
+
+    
+    <button type="submit" class="btn btn-success">
+        @ButtonText
+    </button>
+
+</EditForm>
+
+
+
+@code {
+    [Parameter] public Ingredient Ingredient { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Create";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+}

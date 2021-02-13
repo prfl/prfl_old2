@@ -32,7 +32,7 @@ namespace Profile.Server.Areas.Identity.Pages.Account
         {
             if (username == null)
             {
-                return RedirectToPage("/Index");
+                return LocalRedirect("/");
             }
 
             var user = await _userManager.FindByNameAsync(username);

@@ -167,6 +167,35 @@ else if(linkType.ToUpper() == "SCHEDULE") {
     }
 }
 
+
+else if(linkType.ToUpper() == "RECIPE" || linkType.ToUpper() == "COCKTAIL") {
+    @if(Recipes == null) {
+        <div>
+            <Loading />
+        </div>
+    }
+    else if(Recipes.Length == 0) {
+        <div>
+            <NoLink LinkType="schedule" />
+        </div>
+    }
+    else {
+      @foreach(var recipe in Recipes) {
+        var modalId = GetModalId();
+        var editLink = $"admin/recipe/{recipe.RecipeId}/edit";
+        <div>
+            <RecipeAdminCard ModalId="@modalId" Recipe="@recipe" 
+                            Delete="(() => DeleteLink(recipe.RecipeId, linkType, recipe.Name))" 
+                            Ingredients="@Ingredients"
+                            GetIngredients="(() => GetIngredients(recipe.RecipeId))"/>
+        </div>
+      }
+    }
+}
+
+
+
+
 else if(linkType.ToUpper() == "FAVORITE") {
     @if(Favorites == null) {
         <div>

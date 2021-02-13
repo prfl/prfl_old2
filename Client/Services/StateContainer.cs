@@ -10,6 +10,8 @@ namespace Profile.Client.Services {
         public string ProjectIconUrl { get; set; }
         public string VideoIconUrl { get; set; }
         public string ScheduleIconUrl { get; set; }
+        public string ChefIconUrl { get; set; }
+        public string BartenderIconUrl { get; set; }
         public event Action OnChange;
     
         public void SetProperty(string value)
@@ -36,10 +38,18 @@ namespace Profile.Client.Services {
             ScheduleIconUrl = value;
         }
 
+        public void SetChefIcon(string value) {
+            ChefIconUrl = value;
+        }
+
+        public void SetBartenderIcon(string value) {
+            BartenderIconUrl = value;
+        }
+
         public string GetProperty() {
             return Username;
         }
-    
+
         private void NotifyStateChanged() => OnChange?.Invoke();
     }
 }

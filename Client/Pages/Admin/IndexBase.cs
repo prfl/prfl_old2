@@ -22,6 +22,8 @@ namespace Profile.Client.Pages.Admin
         public Video[] Videos { get; set; }
         public Favorite[] Favorites { get; set; }
         public Schedule[] Schedules { get; set; }
+        public Recipe[] Recipes { get; set; }
+        public Ingredient[] Ingredients { get; set; }
         public Account Account { get; set; }
         
     
@@ -53,6 +55,9 @@ namespace Profile.Client.Pages.Admin
             else if(linkType.ToUpper() == "SCHEDULE") {
                 Schedules = await client.GetFromJsonAsync<Schedule[]>($"api/{linkType}");
             }
+            else if(linkType.ToUpper() == "RECIPE" || linkType.ToUpper() == "COCKTAIL") {
+                Recipes = await client.GetFromJsonAsync<Recipe[]>($"api/{linkType}");
+            }
             
         }
     
@@ -64,6 +69,11 @@ namespace Profile.Client.Pages.Admin
     
         public void SetAccount(string accountId){ 
           Account = Accounts.FirstOrDefault(a => a.AccountId == accountId);
+        }
+        
+        public async Task GetIngredients(string recipeId) {
+            Ingredients = await client.GetFromJsonAsync<Ingredient[]>($"api/ingredient/recipe/{recipeId}");
+            StateHasChanged();
         }
     
         public async Task DeleteLink(string linkId, string linkType, string linkName) { 

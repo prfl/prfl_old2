@@ -1,0 +1,115 @@
+@page "/admin/recipe/{recipeId}/ingredients"
+@using Profile.Client.Components.Admin
+@using Profile.Client.Components.Forms
+@using Profile.Shared.Models
+@inject HttpClient client
+@layout AppLayout
+
+@if(Recipe != null) {
+    <h3 class="mt-1">Add Ingredients</h3>
+}
+else {
+    <h3>Add Ingredients for @Recipe.Name</h3>
+}
+
+<a class="btn btn-light mt-2 mb-2" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1" @onclick="ChangeButtonText">@ButtonText</a>
+
+<div class="collapse multi-collapse show" id="multiCollapseExample1">
+    <div class="card card-body">
+        <IngredientForm Ingredient="@Ingredient" OnValidSubmit="@CreateIngredient"/>
+    </div>
+</div>
+
+@if(Ingredients != null) {
+    @foreach (var ingredient in Ingredients.OrderBy(i => i.Order))
+    {
+        <div>
+            <IngredientAdminCard Ingredient="@ingredient" 
+                                OnClickUpCallback="(() => OnClickUpAsync(ingredient.IngredientId))" 
+                                OnClickDownCallback="(() => OnClickDownAsync(ingredient.IngredientId))"/>
+        </div>
+
+    }
+}
+
+
+@code {
+    [Parameter] public string recipeId { get; set; }
+
+    public Recipe Recipe { get; set; }
+    public List<Ingredient> Ingredients = new List<Ingredient>();
+    //private List<Ingredient> Ingredients = new List<Ingredient>();
+    public Ingredient Ingredient = new Ingredient();
+    public bool IsHidden;
+    public string ButtonText => IsHidden ? "Add Ingredients" : "Hide";
+
+
+    protected override async Task OnInitializedAsync() {
+        Recipe = await client.GetFromJsonAsync<Recipe>($"api/recipe/{recipeId}");
+        Ingredients = await client.GetFromJsonAsync<List<Ingredient>>($"api/ingredient/recipe/{recipeId}");
+    }
+
+    private async Task CreateIngredient() {
+        var post = await client.PostAsJsonAsync($"api/ingredient?recipeId={recipeId}", Ingredient);
+        if(post.IsSuccessStatusCode) {
+            if(Ingredients == null) {
+                Ingredient.Order = 1;
+            }
+            else {
+                Ingredient.Order = Ingredients.Count() + 1;
+            }
+            
+
+            var response = post.Content.ReadFromJsonAsync<Ingredient>();
+            Ingredient.IngredientId = response.Result.IngredientId;
+            Ingredient.RecipeId = response.Result.RecipeId;
+            Ingredients.Add(Ingredient);
+
+            Ingredient = new Ingredient();
+        }
+        
+    }
+
+    public void ChangeButtonText() {
+        if(IsHidden) {
+            IsHidden = !IsHidden; 
+        }
+        else {
+            IsHidden = true;
+        }
+    }
+
+    public async Task OnClickUpAsync(string ingredientId) {         
+        
+        var ingredient = Ingredients.FirstOrDefault(f => f.IngredientId == ingredientId);
+
+        if(ingredient != null && ingredient.Order > 1) {
+
+            var otheringredient = Ingredients.FirstOrDefault(f => f.Order ==  ingredient.Order - 1);
+
+            ingredient.Order -= 1;
+            otheringredient.Order += 1;
+
+            await client.PutAsJsonAsync($"api/ingredient/{ingredient.IngredientId}", ingredient);
+            await client.PutAsJsonAsync($"api/ingredient/{otheringredient.IngredientId}", otheringredient);
+
+            
+        }  
+            
+    }
+    
+    public async Task OnClickDownAsync(string ingredientId) {         
+        var ingredient = Ingredients.FirstOrDefault(f => f.IngredientId == ingredientId);
+        if(ingredient != null && ingredient.Order < Ingredients.Count()) {
+
+            var otheringredient = Ingredients.FirstOrDefault(f => f.Order ==  ingredient.Order + 1);
+            
+            ingredient.Order += 1;
+            otheringredient.Order -= 1;
+
+            await client.PutAsJsonAsync($"api/ingredient/{ingredient.IngredientId}", ingredient);
+            await client.PutAsJsonAsync($"api/ingredient/{otheringredient.IngredientId}", otheringredient);
+            
+        } 
+    }
+}
