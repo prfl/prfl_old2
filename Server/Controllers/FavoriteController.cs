@@ -115,7 +115,13 @@ namespace Profile.Server.Controllers
             
             
             var lastFavorite = await _context.Favorite.OrderBy(f => f.Order).LastOrDefaultAsync(f => f.ProfileUserId == userId);
-            favorite.Order = lastFavorite.Order + 1;
+            if(lastFavorite == null) {
+                favorite.Order = 1;
+            }
+            else {
+                favorite.Order = lastFavorite.Order + 1;
+            }
+            
 
             favorite.ProfileUserId = userId;
             
@@ -146,6 +152,14 @@ namespace Profile.Server.Controllers
             }
             else if(favorite.Type == LinkType.Video) {
                 var link = await _context.Video.FirstOrDefaultAsync(l => l.VideoId == favorite.LinkId);
+                link.IsFavorite = false;
+            }
+            else if(favorite.Type == LinkType.Schedule) {
+                var link = await _context.Schedule.FirstOrDefaultAsync(l => l.ScheduleId == favorite.LinkId);
+                link.IsFavorite = false;
+            }
+            else if(favorite.Type == LinkType.Recipe) {
+                var link = await _context.Recipe.FirstOrDefaultAsync(l => l.RecipeId == favorite.LinkId);
                 link.IsFavorite = false;
             }
 
