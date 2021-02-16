@@ -111,10 +111,14 @@ namespace Profile.Server.Controllers
             if(userId == null) {
                 userId = _userManager.GetUserId(User);
             }
+
+            
             
             var lastFavorite = await _context.Favorite.OrderBy(f => f.Order).LastOrDefaultAsync(f => f.ProfileUserId == userId);
             favorite.Order = lastFavorite.Order + 1;
 
+            favorite.ProfileUserId = userId;
+            
             _context.Favorite.Add(favorite);
             await _context.SaveChangesAsync();
 
