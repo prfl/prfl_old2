@@ -12,7 +12,8 @@ namespace Profile.Shared.Models
         Post,
         Project,
         Video,
-        Schedule
+        Schedule,
+        Recipe
     }
     public class Favorite
     {
