@@ -70,6 +70,43 @@ namespace Profile.Server.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+
+                var userId = _userManager.GetUserId(User);
+
+                var favorite = await _context.Favorite.Where(f => f.Type == LinkType.Recipe).FirstOrDefaultAsync(f => f.LinkId == id);
+
+                var favoriteController = new FavoriteController(_context, _userManager);
+
+
+                if(favorite != null && recipe.IsFavorite == false) {
+                    await favoriteController.DeleteFavorite(favorite.FavoriteId);
+                }
+
+                else if(favorite == null && recipe.IsFavorite == true) {
+                    var newFavorite = new Favorite(){
+                        LinkId = recipe.RecipeId,
+                        ProfileUserId = userId,
+                        Type = LinkType.Recipe,
+                        Name = recipe.Name,
+                        Description = recipe.Description,
+                        Url = recipe.Url,
+                    };
+                    if(recipe.Type == RecipeType.Food) {
+                    favorite.IconUrl = "/assets/icons/food.svg";
+                    }
+                    else {
+                        favorite.IconUrl = "/assets/icons/alcohol.svg";
+                    }
+                    await favoriteController.PostFavorite(newFavorite, userId);
+                }
+
+                else if(favorite != null && recipe.IsFavorite == true) {
+                    favorite.ModifedOn = DateTime.Now;
+                    favorite.Name = recipe.Name;
+                    favorite.Description = recipe.Description;
+                    favorite.Url = recipe.Url;
+                    await favoriteController.PutFavorite(favorite.FavoriteId, favorite);
+                }
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -91,8 +128,34 @@ namespace Profile.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Recipe>> PostRecipe(Recipe recipe)
         {
+            var userId = _userManager.GetUserId(User);
+            recipe.ProfileUserId = userId;
+            
             _context.Recipe.Add(recipe);
             await _context.SaveChangesAsync();
+
+            var favoriteController = new FavoriteController(_context, _userManager);
+
+            if(recipe.IsFavorite == true) {
+
+                var favorite = new Favorite() {
+                    LinkId = recipe.RecipeId,
+                    Name = recipe.Name,
+                    Type = LinkType.Recipe,
+                    Description = recipe.Description,
+                    Url = recipe.Url,
+                    IconUrl = "/assets/icons/link.svg"
+                };
+                if(recipe.Type == RecipeType.Food) {
+                    favorite.IconUrl = "/assets/icons/food.svg";
+                }
+                else {
+                    favorite.IconUrl = "/assets/icons/alcohol.svg";
+                }
+
+                await favoriteController.PostFavorite(favorite, userId);
+                
+            }
 
             return CreatedAtAction("GetRecipe", new { id = recipe.RecipeId }, recipe);
         }

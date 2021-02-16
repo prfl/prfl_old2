@@ -5,11 +5,11 @@
 @inject HttpClient client
 @layout AppLayout
 
-@if(Recipe != null) {
+@if(Recipe == null) {
     <h3 class="mt-1">Add Ingredients</h3>
 }
 else {
-    <h3>Add Ingredients for @Recipe.Name</h3>
+    <h3 class="mt-1">Add Ingredients for @Recipe.Name</h3>
 }
 
 <a class="btn btn-light mt-2 mb-2" data-bs-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1" @onclick="ChangeButtonText">@ButtonText</a>

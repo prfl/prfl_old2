@@ -70,6 +70,14 @@ else {
       }
       
     }
+    else if (favorite.Type == LinkType.Recipe) {
+      if(Recipes != null) {
+        
+        <div>
+          <RecipeCard ModalId="@modalId" Recipe="SetRecipe(favorite.LinkId)" Ingredients="@Ingredients" GetIngredients="(() => GetIngredients(favorite.LinkId))"/>
+        </div>
+      }
+    }
     else {
       
       <div>
@@ -97,6 +105,8 @@ else {
     private Account Account { get; set; }
     private Schedule Schedule { get; set; }
     private Schedule[] Schedules { get; set; }
+    private Recipe[] Recipes { get; set; }
+    private Ingredient[] Ingredients { get; set; }
     private User User { get; set;}
 
 
@@ -111,7 +121,8 @@ else {
 
         Favorites = await client.GetFromJsonAsync<Favorite[]>($"api/favorite/u/{username}");
         Accounts = await client.GetFromJsonAsync<Account[]>($"api/account/u/{username}");
-          Schedules = await client.GetFromJsonAsync<Schedule[]>($"api/Schedule/u/{username}");
+        Schedules = await client.GetFromJsonAsync<Schedule[]>($"api/Schedule/u/{username}");
+        Recipes = await client.GetFromJsonAsync<Recipe[]>($"api/Recipe/u/{username}");
         
         User = await client.GetFromJsonAsync<User>($"api/user/u/{username}");
         
@@ -154,6 +165,16 @@ else {
     private void SetSchedule(string scheduleId){ 
       Schedule = Schedules.FirstOrDefault(a => a.ScheduleId == scheduleId);
     }
+
+    private Recipe SetRecipe(string recipeId){ 
+      return Recipes.FirstOrDefault(a => a.RecipeId == recipeId);
+    }
+
+    public async Task GetIngredients(string recipeId) {
+        Ingredients = await client.GetFromJsonAsync<Ingredient[]>($"api/ingredient/recipe/{recipeId}");
+        StateHasChanged();
+    }
+    
 
 
 

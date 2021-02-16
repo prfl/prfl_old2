@@ -21,6 +21,8 @@ namespace Profile.Shared.Models
         Kilogram,
         Milliliter,
         Liter,
+        Millimeter,
+        Centimeter
     }
     
     public class Ingredient

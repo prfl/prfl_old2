@@ -1,5 +1,6 @@
 @page "/admin/getting-started"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using Profile.Shared.Models
 @inject HttpClient client
 @inject NavigationManager NavigationManager
@@ -115,8 +116,13 @@
 
 
     protected override async Task OnInitializedAsync() {
-
-        GettingStarted = await client.GetFromJsonAsync<GettingStarted>("api/gettingstarted");
+        try {
+          GettingStarted = await client.GetFromJsonAsync<GettingStarted>("api/gettingstarted");
+        }
+        catch(AccessTokenNotAvailableException exception) {
+          exception.Redirect();
+        }
+        
 
         if(GettingStarted.AccountIsCreated  
               && GettingStarted.VideoIsCreated 
