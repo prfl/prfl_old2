@@ -44,6 +44,12 @@ else if(linkType.ToUpper() == "SCHEDULE") {
     </div>
 }
 
+else if(linkType.ToUpper() == "Recipe") {
+    <div>
+        <RecipeForm Recipe="@Recipe" OnValidSubmit="@EditSchedule"/>
+    </div>
+}
+
 
 
 
@@ -57,6 +63,7 @@ else if(linkType.ToUpper() == "SCHEDULE") {
     private Link Link = new Link();
     private Video Video = new Video();
     private Schedule Schedule = new Schedule();
+    private Recipe Recipe = new Recipe();
 
     protected override async Task OnInitializedAsync() {
 
@@ -76,6 +83,9 @@ else if(linkType.ToUpper() == "SCHEDULE") {
         }
         else if(linkType.ToUpper() == "SCHEDULE") {
             Schedule = await client.GetFromJsonAsync<Schedule>($"api/schedule/{linkId}");
+        }
+        else if(linkType.ToUpper() == "RECIPE") {
+            Recipe = await client.GetFromJsonAsync<Recipe>($"api/recipe/{linkId}");
         }
 
 
@@ -108,5 +118,11 @@ else if(linkType.ToUpper() == "SCHEDULE") {
         await client.PutAsJsonAsync($"api/schedule/{linkId}", Schedule);
         NavigationManager.NavigateTo($"admin/schedule");
     }
+
+    private async Task EditRecipe() {
+        await client.PutAsJsonAsync($"api/recipe/{linkId}", Recipe);
+        NavigationManager.NavigateTo($"admin/recipe");
+    }
+
 
 }
