@@ -171,6 +171,7 @@ else {
     }
 
     public async Task GetIngredients(string recipeId) {
+        var client = ClientFactory.CreateClient("ServerAPI.NoAuthenticationClient");
         Ingredients = await client.GetFromJsonAsync<Ingredient[]>($"api/ingredient/recipe/{recipeId}");
         StateHasChanged();
     }
