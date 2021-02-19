@@ -13,7 +13,8 @@ namespace Profile.Shared.Models
         Project,
         Video,
         Schedule,
-        Recipe
+        Recipe,
+        Product
     }
     public class Favorite
     {
