@@ -150,3 +150,8 @@ a strong{
     background-color: #ebeef1;
     color: #686d73;
 }
+
+.col-1-5 {
+    flex: 0 0 auto;
+    width: 10.6666666667% !important;
+}
