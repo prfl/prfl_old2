@@ -79,7 +79,7 @@ namespace Profile.Server.Controllers
                 var favoriteController = new FavoriteController(_context, _userManager);
 
                 if(favorite != null && video.IsFavorite == false) {
-                    await favoriteController.DeleteFavorite(favorite.FavoriteId);
+                    await favoriteController.DeleteFavorite(favorite.FavoriteId, userId);
                 }
 
                 else if(favorite == null && video.IsFavorite == true) {

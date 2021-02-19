@@ -79,7 +79,7 @@ namespace Profile.Server.Controllers
 
 
                 if(favorite != null && recipe.IsFavorite == false) {
-                    await favoriteController.DeleteFavorite(favorite.FavoriteId);
+                    await favoriteController.DeleteFavorite(favorite.FavoriteId, userId);
                 }
 
                 else if(favorite == null && recipe.IsFavorite == true) {
@@ -143,8 +143,7 @@ namespace Profile.Server.Controllers
                     Name = recipe.Name,
                     Type = LinkType.Recipe,
                     Description = recipe.Description,
-                    Url = recipe.Url,
-                    IconUrl = "/assets/icons/link.svg"
+                    Url = recipe.Url
                 };
                 if(recipe.Type == RecipeType.Food) {
                     favorite.IconUrl = "/assets/icons/food.svg";
@@ -164,6 +163,13 @@ namespace Profile.Server.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRecipe(string id)
         {
+            var favorite = await _context.Favorite.Where(f => f.Type == LinkType.Recipe).FirstOrDefaultAsync(f => f.LinkId == id);
+
+            if(favorite != null) {
+                _context.Favorite.Remove(favorite);
+                await _context.SaveChangesAsync();
+            }
+            
             var recipe = await _context.Recipe.FindAsync(id);
             if (recipe == null)
             {
