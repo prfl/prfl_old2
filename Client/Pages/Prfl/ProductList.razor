@@ -1,36 +1,34 @@
-@page "/{username}/projects"
+@page "/{username}/products"
 @using Profile.Client.Components
 @using Profile.Client.Components.Prfl
 @using Profile.Shared.Models
-@inject IHttpClientFactory ClientFactory
 @inject Services.StateContainer StateContainer
+@inject IHttpClientFactory ClientFactory
 @layout MainLayout
 
 <Title Value="@username" />
 
-@if(Projects == null && User == null) {
+@if(Products == null) {
     <div>
         <Loading />
     </div>
 }
-else if(Projects.Length == 0) {
+else if(Products.Length == 0) {
     <div class="alert alert-info mt-3" role="alert">
-        The user does not have any projects yet.
+        The user does not have any links yet.
     </div>
+
 }
 else {
-    @foreach(var project in Projects) {
-        var modalId = GetModalId();
-        <div>
-            <Profile.Client.Components.Prfl.LinkCard   ModalId="@modalId" 
-                        Url="@project.Url" 
-                        Name="@project.Name" 
-                        Description="@project.Description" 
-                        IsFavorite="@project.IsFavorite" 
-                        IconUrl="/assets/icons/kanban.svg"
-                        UserId="@User.UserId"
-                        LinkId="@project.ProjectId"
-                        Type="@LinkType.Project"/>
+    @foreach(var product in Products) {
+        string headingId = $"Heading{Count.ToString()}";
+        string buttonId = $"Button{Count.ToString()}";
+        string accordionTarget = $"Collapse{Count.ToString()}";
+        Count++;
+        <div class="mt-3">
+            <div class="accordion" id="accordionExample">
+                <ProductCard Product="@product" HeadingId="@headingId" AccordionTarget="@accordionTarget" ButtonId="@buttonId" PhoneNumber="@PhoneNumber"/>
+            </div>
         </div>
         
     }
@@ -42,23 +40,26 @@ else {
 
 @code {
     [Parameter] public string username { get; set; }
-    private Project[] Projects { get; set; }
+    private Product[] Products { get; set; }
+    private string PhoneNumber { get; set; }
+
     private User User { get; set; }
 
     private int Count = 1;
 
     protected override async Task OnInitializedAsync() {
-
         ChangePropertyValue();
         ChangeIconValue();
 
         var client = ClientFactory.CreateClient("ServerAPI.NoAuthenticationClient");
 
         User = await client.GetFromJsonAsync<User>($"api/user/u/{username}");
-        Projects = await client.GetFromJsonAsync<Project[]>($"api/project/u/{username}");
-            
+        PhoneNumber = await client.GetStringAsync($"api/user/u/{username}/phone");
+        Products = await client.GetFromJsonAsync<Product[]>($"api/product/u/{username}");
+
         StateContainer.OnChange += StateHasChanged;
     }
+
     private void ChangePropertyValue()
     {
         StateContainer.SetProperty(username);
@@ -75,17 +76,12 @@ else {
         StateContainer.SetAccountIcon("/assets/icons/account.svg");
         StateContainer.SetLinkIcon("/assets/icons/link-fill-ns.svg");
         StateContainer.SetFavoriteIcon("/assets/icons/star.svg");
-        StateContainer.SetProjectIcon("/assets/icons/kanban-fill.svg");
+        StateContainer.SetProjectIcon("/assets/icons/kanban.svg");
         StateContainer.SetVideoIcon("/assets/icons/video.svg");
         StateContainer.SetScheduleIcon("/assets/icons/calendar2.svg");
         StateContainer.SetChefIcon("/assets/icons/food.svg");
         StateContainer.SetBartenderIcon("/assets/icons/alcohol.svg");
-        StateContainer.SetProductIcon("/assets/icons/cart.svg");
-    }
-
-    private string GetModalId()
-    {
-        var num = Count++;
-        return "modal" + num;
+        StateContainer.SetProductIcon("/assets/icons/alcohol.svg");
+        StateContainer.SetProductIcon("/assets/icons/cart-fill.svg");
     }
 }
