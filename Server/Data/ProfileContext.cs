@@ -90,5 +90,6 @@ namespace Profile.Server.Data
         public DbSet<Profile.Shared.Models.Schedule> Schedule { get; set; }
         public DbSet<Profile.Shared.Models.Recipe> Recipe { get; set; }
         public DbSet<Profile.Shared.Models.Ingredient> Ingredient { get; set; }
+        public DbSet<Profile.Shared.Models.Product> Product { get; set; }
     }
 }
