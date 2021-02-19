@@ -51,6 +51,11 @@
             <RecipeForm Recipe="@Recipe" OnValidSubmit="CreateRecipe" />
         </div>
     }
+    else if(linkType.ToUpper() == "PRODUCT") {
+        <div>
+            <ProductForm Product="@Product" OnValidSubmit="CreateProduct" />
+        </div>
+    }
 
 
 </div>
@@ -66,6 +71,7 @@
     private Video Video = new Video();
     private Schedule Schedule = new Schedule();
     private Recipe Recipe = new Recipe();
+    private Product Product = new Product();
 
 
     protected override async Task OnInitializedAsync() {
@@ -103,6 +109,11 @@
         var response = await client.PostAsJsonAsync("api/recipe", Recipe);
         var recipe = response.Content.ReadFromJsonAsync<Recipe>();
         NavigationManager.NavigateTo($"admin/recipe/{recipe.Result.RecipeId}/ingredients");
+    }
+
+    private async Task CreateProduct() {
+        await client.PostAsJsonAsync("api/product", Product);
+        NavigationManager.NavigateTo("admin/product");
     }
 
 }

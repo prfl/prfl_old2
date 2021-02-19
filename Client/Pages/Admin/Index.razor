@@ -193,6 +193,42 @@ else if(linkType.ToUpper() == "RECIPE" || linkType.ToUpper() == "COCKTAIL") {
     }
 }
 
+else if(linkType.ToUpper() == "PRODUCT") {
+    @if(Products == null) {
+        <div>
+            <Loading />
+        </div>
+    }
+    else if(Products.Length == 0) {
+        <div>
+            <NoLink LinkType="products" />
+        </div>
+    }
+    else {
+        
+        if(!UserHasPhoneNumber) {
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                You customers won't be able to see <strong>Order Button</strong> unless you add your phone number.
+                <br />
+                <a href="https://localhost:5001/Identity/Account/Manage"><strong>Click here</strong></a> to add your phone number.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+            
+        
+        
+        @foreach(var product in Products) {
+            string headingId = $"Heading{Count.ToString()}";
+            string accordionTarget = $"Collapse{Count.ToString()}";
+            string buttonId = $"Button{Count.ToString()}";
+            Count++;
+          <div class="accordion" id="accordionExample">
+              <ProductAdminCard Product="@product" AccordionTarget="@accordionTarget" HeadingId="@headingId" ButtonId="@buttonId" Remove="(() => DeleteLink(product.ProductId, linkType, product.Name))"/>
+          </div>
+        }
+    }
+}
+
 
 
 
