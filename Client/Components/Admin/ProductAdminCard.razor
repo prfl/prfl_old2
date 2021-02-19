@@ -1,0 +1,102 @@
+@using Profile.Shared.Models
+@inject IJSRuntime JSRuntime
+
+<div class="accordion-item mb-3">
+  <h2 class="accordion-header shadow bg-white rounded" id="@HeadingId">
+    <div class="row rounded g-0">
+      <div class="col-1 pb-1 text-center border-end border-1">
+        <div class="col"><a type="button" @onclick="@OnClickUpCallback"><i class="bi bi-caret-up" style="font-size: 1.3rem;"></i></a></div>
+        <div class="col"><a type="button"@onclick="@OnClickDownCallback"><i class="bi bi-caret-down" style="font-size: 1.3rem;"></i></a></div>
+      </div>
+      <div class="col-11 mt-1 px-2">
+        <button id="@ButtonId" class="accordion-button collapsed border-1 border-0 rounded" type="button" @onclick="(() => CheckArea(ButtonId))" data-bs-toggle="collapse" data-bs-target="#@AccordionTarget" aria-expanded="@IsExpanded" aria-controls="@HeadingId">
+          <div class="rounded-circle me-2 border border-2 border-secondary @display"><img src="@Product.ImageUrl" class="rounded-circle" width="30px" height="30px"/></div>
+          <div class="col text-start">@Product.Name</div>
+          <div class="col text-end @display">
+            @if(Product.Price % 1 > 0.00M) {
+                <span class="badge bg-@PriceBadgeColor">@Product.Price @Product.Currency</span>
+              }
+              else {
+                <span class="badge bg-@PriceBadgeColor">@Convert.ToInt32(Product.Price) @Product.Currency</span>
+              }  
+          </div>
+          <div class="col text-end me-1">
+          @if(Product.IsFavorite) {
+            <img class="float-right" src="/assets/icons/star-fill.svg" height="20px" width="20px"/>
+          }
+          </div>
+        </button>
+      </div>
+    </div>
+  </h2>
+  <div id="@AccordionTarget" class="accordion-collapse collapse border-0 mt-2" aria-labelledby="@HeadingId" data-bs-parent="#accordionExample">
+      <div class="col">
+        <div class="card border-0 shadow rounded" style="max-width: 540px;">
+          <div class="row g-0 mb-2 p-1">
+            <div class="col-6 bg-light border-end border-1 rounded text-center">
+              <img src="@Product.ImageUrl" alt="@Product.Name" width="100%" height="100%">
+            </div>
+            <div class="col-6">
+              <div class="card-body pt-1">
+                <div class="row mb-2">
+                  <div class="col text-end"><span class="badge bg-light text-dark">@Product.Category</span></div>
+                </div>
+                <div class="row">
+                  <div class="col"><h5 class="card-title">@Product.Name</h5></div>
+                </div>
+                <div class="row">
+                  <div class="col"><p class="card-text">@Product.Description</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer bg-white">
+            <div class="row g-0">
+            
+              <div class="col-1-5 me-2"><a href='@($"/admin/product/{Product.ProductId}/edit")' type="button" class="btn btn-sm btn-outline-warning">Edit</a></div>
+              <div class="col-1"><button @onclick="Remove" type="button" class="btn btn-sm btn-outline-danger">Delete</button></div>
+              <div class="col text-end">
+                <p class="card-text">
+                  <h6>
+                    @if(Product.Price % 1 > 0.00M) {
+                      <span class="badge bg-@PriceBadgeColor">@Product.Price @Product.Currency</span>
+                    }
+                    else {
+                      <span class="badge bg-@PriceBadgeColor">@Convert.ToInt32(Product.Price) @Product.Currency</span>
+                    }
+                  </h6>
+                </p>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+  @code {
+    [Parameter] public Product Product { get; set; }
+    [Parameter] public string AccordionTarget { get; set; }
+    [Parameter] public string HeadingId { get; set; }
+    [Parameter] public string ButtonId { get; set; }
+    [Parameter] public EventCallback Remove { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> OnClickUpCallback { get; set; }
+    [Parameter] public EventCallback<MouseEventArgs> OnClickDownCallback { get; set; }
+    
+    private bool IsExpanded = false;
+
+    private string display => IsExpanded ? "d-none" : "";
+
+    private string PriceBadgeColor => Product.Currency == Currency.LBP ? "primary" : "success";
+
+    private async void CheckArea(string id) {
+        var test = await JSRuntime.InvokeAsync<bool>("CheckArea", id);
+        if(test == true) {
+          IsExpanded = false;
+        }
+        else {
+          IsExpanded = true;
+        }
+    }
+  }
