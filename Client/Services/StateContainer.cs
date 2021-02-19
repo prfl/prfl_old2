@@ -12,6 +12,7 @@ namespace Profile.Client.Services {
         public string ScheduleIconUrl { get; set; }
         public string ChefIconUrl { get; set; }
         public string BartenderIconUrl { get; set; }
+        public string ProductIconUrl { get; set; }
         public event Action OnChange;
     
         public void SetProperty(string value)
@@ -44,6 +45,9 @@ namespace Profile.Client.Services {
 
         public void SetBartenderIcon(string value) {
             BartenderIconUrl = value;
+        }
+        public void SetProductIcon(string value) {
+            ProductIconUrl = value;
         }
 
         public string GetProperty() {

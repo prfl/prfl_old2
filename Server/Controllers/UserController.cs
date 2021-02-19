@@ -35,9 +35,17 @@ namespace Profile.Server.Controllers
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         }
 
+        [HttpGet("u/{username}/phone")]
+        public async Task<ActionResult<string>> GetUserPhoneNumber(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            return user.PhoneNumber;
+        }
+
         public class UserModel {
             public string UserId { get; set; }
             public ProfileUserType ProfileUserType { get; set; }
+            public bool HasPhoneNumber { get; set; }
         }
         public UserModel Model = new UserModel();
 
@@ -47,6 +55,9 @@ namespace Profile.Server.Controllers
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
             Model.UserId = user.Id;
             Model.ProfileUserType = user.ProfileUserType;
+            if(user.PhoneNumber != null) {
+                Model.HasPhoneNumber = true;
+            }
             return Model;
         }
 

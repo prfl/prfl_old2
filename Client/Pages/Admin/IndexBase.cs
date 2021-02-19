@@ -5,6 +5,8 @@ using Profile.Shared.Models;
 using System.Net.Http;
 using System.Net.Http.Json;
 using Microsoft.JSInterop;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Profile.Client.Pages.Admin
 {
@@ -15,6 +17,7 @@ namespace Profile.Client.Pages.Admin
         [Inject] IJSRuntime JSRuntime { get; set; }
         [Parameter] public string username { get; set; }
         [Parameter] public string linkType { get; set; }
+        public bool UserHasPhoneNumber { get; set; }
         public int Count = 1;
         public Link[] Links { get; set; }
         public Account[] Accounts { get; set; }
@@ -24,6 +27,7 @@ namespace Profile.Client.Pages.Admin
         public Schedule[] Schedules { get; set; }
         public Recipe[] Recipes { get; set; }
         public Ingredient[] Ingredients { get; set; }
+        public Product[] Products { get; set; }
         public Account Account { get; set; }
         
     
@@ -35,6 +39,9 @@ namespace Profile.Client.Pages.Admin
         
             var user = await client.GetFromJsonAsync<ProfileUser>("api/user");
             username = user.UserName;
+            if(user.PhoneNumber != null) {
+                UserHasPhoneNumber = true;
+            }
             
             if(linkType.ToUpper() == "LINK") {
                 Links = await client.GetFromJsonAsync<Link[]>($"api/{linkType}");
@@ -57,6 +64,9 @@ namespace Profile.Client.Pages.Admin
             }
             else if(linkType.ToUpper() == "RECIPE" || linkType.ToUpper() == "COCKTAIL") {
                 Recipes = await client.GetFromJsonAsync<Recipe[]>($"api/{linkType}");
+            }
+            else if(linkType.ToUpper() == "PRODUCT") {
+                Products = await client.GetFromJsonAsync<Product[]>($"api/{linkType}");
             }
             
         }

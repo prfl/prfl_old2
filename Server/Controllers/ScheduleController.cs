@@ -80,7 +80,7 @@ namespace Profile.Server.Controllers
                 var favoriteController = new FavoriteController(_context, _userManager);
 
                 if(favorite != null && schedule.IsFavorite == false) {
-                    await favoriteController.DeleteFavorite(favorite.FavoriteId);
+                    await favoriteController.DeleteFavorite(favorite.FavoriteId, userId);
                 }
 
                 else if(favorite == null && schedule.IsFavorite == true) {

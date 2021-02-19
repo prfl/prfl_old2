@@ -133,9 +133,12 @@ namespace Profile.Server.Controllers
 
         // DELETE: api/Favorite/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFavorite(string id)
+        public async Task<IActionResult> DeleteFavorite(string id, string userId)
         {
-            var userId = _userManager.GetUserId(User);
+            if(userId == null) {
+                userId = _userManager.GetUserId(User);
+            }
+            
             var favorite = await _context.Favorite.FindAsync(id);
 
             if(favorite.Type == LinkType.Account) {
@@ -160,6 +163,10 @@ namespace Profile.Server.Controllers
             }
             else if(favorite.Type == LinkType.Recipe) {
                 var link = await _context.Recipe.FirstOrDefaultAsync(l => l.RecipeId == favorite.LinkId);
+                link.IsFavorite = false;
+            }
+            else if(favorite.Type == LinkType.Product) {
+                var link = await _context.Product.FirstOrDefaultAsync(l => l.ProductId == favorite.LinkId);
                 link.IsFavorite = false;
             }
 

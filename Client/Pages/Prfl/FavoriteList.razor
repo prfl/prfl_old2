@@ -27,7 +27,11 @@ else if(Favorites.Count() == 0) {
 
 else {
   @foreach(var favorite in Favorites) {
-    var modalId = GetModalId(); 
+    var modalId = GetModalId();
+    string headingId = $"Heading{Count.ToString()}";
+    string buttonId = $"Button{Count.ToString()}";
+    string accordionTarget = $"Collapse{Count.ToString()}";
+
 
     if(favorite.Type == LinkType.Account ) {
       if(Accounts != null) {
@@ -78,6 +82,14 @@ else {
         </div>
       }
     }
+    else if (favorite.Type == LinkType.Product) {
+      if(Products != null) {
+        
+        <div class="accordion mt-3" id="accordionExample">
+          <ProductCard Product="Products.FirstOrDefault(a => a.ProductId== favorite.LinkId)" HeadingId="@headingId" AccordionTarget="@accordionTarget" ButtonId="@buttonId" PhoneNumber="@PhoneNumber"/>
+        </div>
+      }
+    }
     else {
       
       <div>
@@ -107,6 +119,8 @@ else {
     private Schedule[] Schedules { get; set; }
     private Recipe[] Recipes { get; set; }
     private Ingredient[] Ingredients { get; set; }
+    private Product[] Products { get; set; }
+    private string PhoneNumber { get; set; }
     private User User { get; set;}
 
 
@@ -123,6 +137,10 @@ else {
         Accounts = await client.GetFromJsonAsync<Account[]>($"api/account/u/{username}");
         Schedules = await client.GetFromJsonAsync<Schedule[]>($"api/Schedule/u/{username}");
         Recipes = await client.GetFromJsonAsync<Recipe[]>($"api/Recipe/u/{username}");
+        Products = await client.GetFromJsonAsync<Product[]>($"api/product/u/{username}");
+        if(Products != null) {
+          PhoneNumber = await client.GetStringAsync($"api/user/u/{username}/phone");
+        }
         
         User = await client.GetFromJsonAsync<User>($"api/user/u/{username}");
         
@@ -151,12 +169,13 @@ else {
         StateContainer.SetScheduleIcon("/assets/icons/calendar2.svg");
         StateContainer.SetChefIcon("/assets/icons/food.svg");
         StateContainer.SetBartenderIcon("/assets/icons/alcohol.svg");
+        StateContainer.SetProductIcon("/assets/icons/cart.svg");
     }
 
     private string GetModalId()
     {
-        var num = Count++;
-        return "modal" + num;
+        Count += 1;
+        return "modal" + Count;
     }
 
     private void SetAccount(string accountId){ 
