@@ -43,6 +43,13 @@
             </NavLink>
         </div>
     }
+    else if(User != null && User.ProfileUserType == ProfileUserType.Shop) {
+        <div class="col">
+            <NavLink class="nav-link" href='@($"{StateContainer.Username}/products")' Match="NavLinkMatch.All">
+                <img src='@($"{StateContainer.ProductIconUrl}")' >
+            </NavLink>
+        </div>
+    }
     else {
         <div class="col">
             <NavLink class="nav-link" href="@projectUrl"  Match="NavLinkMatch.All">
@@ -51,12 +58,21 @@
         </div>
     }
     
+    @if(User != null && User.ProfileUserType == ProfileUserType.Shop) {
+        <div class="col">
+            <NavLink class="nav-link disabled" href='@($"{StateContainer.Username}/offers")' Match="NavLinkMatch.All">
+                <span class="iconify oi icon:ic:round-card-giftcard icon-inline:false" data-inline="false"  data-width="30" data-height="30"></span>
+            </NavLink>
+        </div>
+    }
+    else {
+        <div class="col">
+            <NavLink class="nav-link" href="@videoUrl"  Match="NavLinkMatch.All">
+                <img src="@videoIcon" >
+            </NavLink>
+        </div>
+    }
     
-    <div class="col">
-        <NavLink class="nav-link" href="@videoUrl"  Match="NavLinkMatch.All">
-            <img src="@videoIcon" >
-        </NavLink>
-    </div>
 </div>
 
 </div>
