@@ -165,6 +165,10 @@ namespace Profile.Server.Controllers
                 var link = await _context.Recipe.FirstOrDefaultAsync(l => l.RecipeId == favorite.LinkId);
                 link.IsFavorite = false;
             }
+            else if(favorite.Type == LinkType.Product) {
+                var link = await _context.Product.FirstOrDefaultAsync(l => l.ProductId == favorite.LinkId);
+                link.IsFavorite = false;
+            }
 
 
             if (favorite == null)
