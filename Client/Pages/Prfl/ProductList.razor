@@ -24,10 +24,11 @@ else {
         string headingId = $"Heading{Count.ToString()}";
         string buttonId = $"Button{Count.ToString()}";
         string accordionTarget = $"Collapse{Count.ToString()}";
+        string modalId = $"Modal{Count.ToString()}";
         Count++;
         <div class="mt-3">
             <div class="accordion" id="accordionExample">
-                <ProductCard Product="@product" HeadingId="@headingId" AccordionTarget="@accordionTarget" ButtonId="@buttonId" PhoneNumber="@PhoneNumber"/>
+                <ProductCard Product="@product" HeadingId="@headingId" AccordionTarget="@accordionTarget" ButtonId="@buttonId" PhoneNumber="@PhoneNumber" ModalId="@modalId"/>
             </div>
         </div>
         
