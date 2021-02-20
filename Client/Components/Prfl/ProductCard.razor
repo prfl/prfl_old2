@@ -1,5 +1,6 @@
 @using Profile.Shared.Models
 @inject IJSRuntime JSRuntime
+@inherits Profile.Components.HtmlHelper
 
 <div class="accordion-item mb-3">
   <h2 class="accordion-header shadow bg-white rounded" id="@HeadingId">
@@ -9,10 +10,10 @@
           <div class="col text-start">@Product.Name</div>
           <div class="col text-end @display">
             @if(Product.Price % 1 > 0.00M) {
-                <span class="badge bg-@PriceBadgeColor">@Product.Price @Product.Currency</span>
+                <span class="badge bg-@GetPriceBadgeColor(Product.Currency)">@Product.Price @Product.Currency</span>
               }
               else {
-                <span class="badge bg-@PriceBadgeColor">@Convert.ToInt32(Product.Price) @Product.Currency</span>
+                <span class="badge bg-@GetPriceBadgeColor(Product.Currency)">@Convert.ToInt32(Product.Price) @Product.Currency</span>
               } 
           </div>
           <div class="col text-end me-1">
@@ -26,34 +27,32 @@
   <div id="@AccordionTarget" class="accordion-collapse collapse border-0 mt-2" aria-labelledby="@HeadingId" data-bs-parent="#accordionExample">
       <div class="col">
         <div class="card border-0 shadow rounded" style="max-width: 540px;">
-          <div class="row g-0 mb-2 pt-1">
-            <div class="col-6 bg-light border-end border-1 rounded text-center">
-              <img src="@Product.ImageUrl" alt="@Product.Name" width="100%" height="100%">
+          <div class="row g-0 mb-2">
+            <div class="col-12 p-2 text-center">
+              <img id="@Product.ProductId" class="rounded border border-1" src="@Product.ImageUrl" alt="@Product.Name" width="100%" height="auto" style="max-height: @GetImageHeight(Product.ProductId);">
             </div>
-            <div class="col-6">
-              <div class="card-body p-1">
-                <div class="row mb-2">
+            <div class="col-12">
+              <div class="card-body p-2">
+                <div class="row my-3">
+                  <div class="col"><h5 class="card-title">@Product.Name</h5></div>
                   <div class="col text-end"><span class="badge bg-light text-dark">@Product.Category</span></div>
                 </div>
                 <div class="row">
-                  <div class="col"><h5 class="card-title">@Product.Name</h5></div>
-                </div>
-                <div class="row">
-                  <div class="col"><p class="card-text">@Product.Description</p></div>
+                  <Modal ModalId="@ModalId" LaunchButtonText="Info" Title="@Product.Name" Description="@Product.Description"/>
                 </div>
               </div>
             </div>
           </div>
-          <div class="card-footer bg-white">
+          <div class="card-footer bg-white p-2">
             <div class="row g-0">
-              <div class="col text-start">
+              <div class="col text-start p-2">
                 <p class="card-text">
                   <h6>
                     @if(Product.Price % 1 > 0.00M) {
-                      <span class="badge bg-@PriceBadgeColor">@Product.Price @Product.Currency</span>
+                      <span class="badge bg-@GetPriceBadgeColor(Product.Currency)">@Product.Price @Product.Currency</span>
                     }
                     else {
-                      <span class="badge bg-@PriceBadgeColor">@Convert.ToInt32(Product.Price) @Product.Currency</span>
+                      <span class="badge bg-@GetPriceBadgeColor(Product.Currency)">@Convert.ToInt32(Product.Price) @Product.Currency</span>
                     }
                   </h6>
                 </p>
@@ -73,15 +72,23 @@
   
 @code {
     [Parameter] public Product Product { get; set; }
+    [Parameter] public string ModalId { get; set; }
     [Parameter] public string AccordionTarget { get; set; }
     [Parameter] public string HeadingId { get; set; }
     [Parameter] public string ButtonId { get; set; }
     [Parameter] public string PhoneNumber { get; set; }
-
     private bool IsExpanded = false;
-
+    private string MaxHeight { get; set; }
     private string display => IsExpanded ? "d-none" : "";
-    private string PriceBadgeColor => Product.Currency == Currency.LBP ? "primary" : "success";
+
+    private string GetPriceBadgeColor(Currency currency) {
+      if(currency == Currency.LBP)
+        return "primary";
+      else if(currency == Currency.EUR)
+        return "purple";
+      else
+        return "success";
+    }
 
     private async void CheckArea(string id) {
         var test = await JSRuntime.InvokeAsync<bool>("CheckArea", id);
@@ -91,6 +98,10 @@
         else {
           IsExpanded = true;
         }
+    }
+
+    private async Task<object> GetImageHeight(string id) {
+        return await JSRuntime.InvokeAsync<string>("getImageHeight", id);
     }
 
 }

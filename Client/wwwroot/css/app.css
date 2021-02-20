@@ -93,6 +93,10 @@ a {
     border-left: .25rem solid #4e73df!important;
 }
 
+.bg-purple {
+    background-color: #752eaf!important;
+}
+
 .border-left-info {
     border-left: .25rem solid #cff4fc!important;
 }

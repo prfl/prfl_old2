@@ -221,9 +221,10 @@ else if(linkType.ToUpper() == "PRODUCT") {
             string headingId = $"Heading{Count.ToString()}";
             string accordionTarget = $"Collapse{Count.ToString()}";
             string buttonId = $"Button{Count.ToString()}";
+            string modalId = $"Modal{Count.ToString()}";
             Count++;
           <div class="accordion" id="accordionExample">
-              <ProductAdminCard Product="@product" AccordionTarget="@accordionTarget" HeadingId="@headingId" ButtonId="@buttonId" Remove="(() => DeleteLink(product.ProductId, linkType, product.Name))"/>
+              <ProductAdminCard Product="@product" AccordionTarget="@accordionTarget" HeadingId="@headingId" ButtonId="@buttonId" ModalId="@modalId" Remove="(() => DeleteLink(product.ProductId, linkType, product.Name))"/>
           </div>
         }
     }

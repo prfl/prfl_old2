@@ -86,7 +86,7 @@ else {
       if(Products != null) {
         
         <div class="accordion mt-3" id="accordionExample">
-          <ProductCard Product="Products.FirstOrDefault(a => a.ProductId== favorite.LinkId)" HeadingId="@headingId" AccordionTarget="@accordionTarget" ButtonId="@buttonId" PhoneNumber="@PhoneNumber"/>
+          <ProductCard Product="Products.FirstOrDefault(a => a.ProductId== favorite.LinkId)" HeadingId="@headingId" AccordionTarget="@accordionTarget" ButtonId="@buttonId" ModalId="@modalId" PhoneNumber="@PhoneNumber"/>
         </div>
       }
     }
