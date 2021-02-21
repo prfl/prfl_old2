@@ -25,7 +25,10 @@ namespace Profile.Server.Pages.Products
         public Product Product { get; set; }
         public async Task<IActionResult> OnGetAsync(string productId)
         {
-            Product = await _context.Product.FirstOrDefaultAsync(p => p.ProductId == productId);
+            if(!String.IsNullOrEmpty(productId)) {
+                Product = await _context.Product.FirstOrDefaultAsync(p => p.ProductId == productId);
+            }
+            
             return Page();
         }
     }

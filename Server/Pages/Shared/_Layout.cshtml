@@ -2,14 +2,15 @@
 @using Microsoft.AspNetCore.Mvc.ViewEngines
 @inject IWebHostEnvironment Environment
 @inject ICompositeViewEngine Engine
+
 <!DOCTYPE html>
-<html>
+<html class="h-100">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - prfl</title>
     <link rel="stylesheet" href="~/Identity/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/Identity/css/site.css" />
+    @* <link rel="stylesheet" href="~/Identity/css/site.css" /> *@
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <meta name="google-signin-client_id" content="68095441364-91hd3ov9ajhrs86pmvadpegrtnp8flop.apps.googleusercontent.com">
 
@@ -18,20 +19,17 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 
-    @{
-        var og = Engine.FindView(ViewContext, "_OpenGraph", isMainPage: false);
-    }
-    @if (og.Success)
-    {
-        await Html.RenderPartialAsync("_OpenGraph");
-    }
+    @RenderSection("metatags", false)
 
 </head>
-<body>
+<body class="d-flex flex-column h-100">
     <header>
         <nav class="navbar navbar-expand-sm navbar-light navbar-toggleable-sm bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" href="~/"><img src="~/assets/icons/account-fill.svg" />PRFL</a>
+                <a class="navbar-brand" href="~/">
+                    <img src="~/assets/icons/account-fill.svg"/>
+                    PRFL
+                </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -56,11 +54,11 @@
     </header>
 
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main flex-shrink-0" class="pb-3">
             @RenderBody()
         </main>
     </div>
-    <footer class="footer border-top text-muted">
+    <footer class="footer mt-auto py-3 bg-light">
         <div class="container">
             &copy; 2020 - prfl - <a asp-area="" asp-page="Privacy">Privacy</a>
         </div>
