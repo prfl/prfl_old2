@@ -52,3 +52,30 @@ function initialize(i,t){
         
     }
     
+window.exampleJsFunctions = {
+  uploadImage: function () {
+    let imageHandle = "";
+    const apikey = 'AV4oJQB1wSR6myENuSOlkz';
+    const client = filestack.init(apikey);
+    
+    const options = {
+      uploadInBackground: false,
+      onFileSelected: file => {
+        // If you throw any error in this function it will reject the file selection.
+        // The error message will be displayed to the user as an alert.
+        if (file.size > 1000 * 1000) {
+            throw new Error('File too big, select something smaller than 1MB');
+        }
+      },
+      onFileUploadFinished: (response) => {
+        // after file upload, make request with data to your application
+          imageHandle = response.handle;
+          console.log(imageHandle);
+          DotNet.invokeMethodAsync('Profile.Client', 'UploadImage', imageHandle)
+        }
+      }
+      const picker = client.picker(options);
+      picker.open();
+    }
+    
+  }
