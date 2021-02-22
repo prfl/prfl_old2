@@ -28,7 +28,6 @@ namespace Profile.Server.Controllers
 
         // GET: api/User
         [HttpGet]
-        [EnableCors]
         public async Task<ActionResult<ProfileUser>> GetUser()
         {
             var userId = _userManager.GetUserId(User);
@@ -46,6 +45,7 @@ namespace Profile.Server.Controllers
             public string UserId { get; set; }
             public ProfileUserType ProfileUserType { get; set; }
             public bool HasPhoneNumber { get; set; }
+            public string ImageUrl { get; set; }
         }
         public UserModel Model = new UserModel();
 
@@ -55,6 +55,7 @@ namespace Profile.Server.Controllers
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
             Model.UserId = user.Id;
             Model.ProfileUserType = user.ProfileUserType;
+            Model.ImageUrl = user.ImageUrl;
             if(user.PhoneNumber != null) {
                 Model.HasPhoneNumber = true;
             }
@@ -107,6 +108,37 @@ namespace Profile.Server.Controllers
                 if (!ProfileUserExists(id))
                 {
                     return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        // POST: api/User
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("image/{imageUrl}")]
+        public async Task<ActionResult> UpdateProfilePicture(string imageUrl, ProfileUser profileUser)
+        {
+
+            var userId = _userManager.GetUserId(User);
+            profileUser = await _userManager.FindByIdAsync(userId);
+            profileUser.ImageUrl = imageUrl;
+
+            _context.Entry(profileUser).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                if (ProfileUserExists(userId))
+                {
+                    return Conflict();
                 }
                 else
                 {
