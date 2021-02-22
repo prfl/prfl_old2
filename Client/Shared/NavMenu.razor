@@ -89,8 +89,13 @@
                 </li>
                 <li><hr class="dropdown-divider text-light"></li>
                 <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="admin/settings/appearance" Match="NavLinkMatch.All">
+                         <span class="oi oi-person" aria-hidden="true"></span>Appearance
+                    </NavLink>
+                </li>
+                <li class="nav-item px-3">
                     <NavLink class="nav-link" @onclick='@(() => Navigate("support"))' Match="NavLinkMatch.All">
-                         Support
+                         <span class="oi oi-headphones" aria-hidden="true"></span>Support
                     </NavLink>
                 </li>
             </Authorized>
