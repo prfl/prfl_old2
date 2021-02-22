@@ -7,8 +7,24 @@
 @inject IHttpClientFactory ClientFactory
 @inject HttpClient client
 @layout MainLayout
+@inherits ProfileBase
 
 <Title Value="@username" />
+
+@if(User != null) {
+  if(!String.IsNullOrEmpty(User.ImageUrl)) {
+    <div>
+      <Header Username="@username" ImageUrl="@User.ImageUrl"/>
+    </div>
+  }
+  else {
+    <div>
+      <Header Username="@username" ImageUrl="/assets/logo/person-circle.svg"/>
+    </div>
+    
+  }
+}
+
 
 @if(Recipes == null) {
     <div>
@@ -37,36 +53,19 @@ else {
 
 
 @code {
-    [Parameter] public string username { get; set; }
-    private Recipe[] Recipes { get; set; }
-    public Ingredient[] Ingredients { get; set; }
-
-    private User User { get; set; }
-
-    private int Count = 1;
 
     protected override async Task OnInitializedAsync() {
-        ChangePropertyValue();
-        ChangeIconValue();
 
         var client = ClientFactory.CreateClient("ServerAPI.NoAuthenticationClient");
+        StateContainer.SetProperty(username);
+        ChangePropertyValue(username, client);
+        ChangeIconValue();
 
         User = await client.GetFromJsonAsync<User>($"api/user/u/{username}");
         Recipes = await client.GetFromJsonAsync<Recipe[]>($"api/Recipe/u/{username}");
 
         
         StateContainer.OnChange += StateHasChanged;
-    }
-
-    private void ChangePropertyValue()
-    {
-        StateContainer.SetProperty(username);
-    }
-
-
-    public void Dispose()
-    {
-        StateContainer.OnChange -= StateHasChanged;
     }
 
     private void ChangeIconValue()
@@ -79,16 +78,5 @@ else {
         StateContainer.SetChefIcon("/assets/icons/food-fill.svg");
         StateContainer.SetBartenderIcon("/assets/icons/alcohol-fill.svg");
         StateContainer.SetProductIcon("/assets/icons/cart.svg");
-    }
-    private string GetModalId()
-    {
-        var num = Count++;
-        return "modal" + num;
-    }
-
-    public async Task GetIngredients(string recipeId) {
-        var client = ClientFactory.CreateClient("ServerAPI.NoAuthenticationClient");
-        Ingredients = await client.GetFromJsonAsync<Ingredient[]>($"api/ingredient/recipe/{recipeId}");
-        StateHasChanged();
     }
 }

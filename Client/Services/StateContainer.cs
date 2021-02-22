@@ -4,6 +4,7 @@ namespace Profile.Client.Services {
     public class StateContainer
     {
         public string Username { get; set; }
+        public string ImageUrl { get; set; }
         public string FavoriteIconUrl { get; set; }
         public string AccountIconUrl { get; set; }
         public string LinkIconUrl { get; set; }
@@ -18,6 +19,10 @@ namespace Profile.Client.Services {
         public void SetProperty(string value)
         {
             Username = value;
+            NotifyStateChanged();
+        }
+        public void SetImageURl(string value) {
+            ImageUrl = value;
             NotifyStateChanged();
         }
         public void SetAccountIcon(string value) {

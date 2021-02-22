@@ -5,8 +5,24 @@
 @inject Services.StateContainer StateContainer
 @inject IHttpClientFactory ClientFactory
 @layout MainLayout
+@inherits ProfileBase
 
 <Title Value="@username" />
+
+@if(User != null) {
+  if(!String.IsNullOrEmpty(User.ImageUrl)) {
+    <div>
+      <Header Username="@username" ImageUrl="@User.ImageUrl"/>
+    </div>
+  }
+  else {
+    <div>
+      <Header Username="@username" ImageUrl="/assets/logo/person-circle.svg"/>
+    </div>
+    
+  }
+}
+
 
 @if(Products == null) {
     <div>
@@ -40,36 +56,19 @@ else {
 
 
 @code {
-    [Parameter] public string username { get; set; }
-    private Product[] Products { get; set; }
-    private string PhoneNumber { get; set; }
-
-    private User User { get; set; }
-
-    private int Count = 1;
 
     protected override async Task OnInitializedAsync() {
-        ChangePropertyValue();
-        ChangeIconValue();
 
         var client = ClientFactory.CreateClient("ServerAPI.NoAuthenticationClient");
+        StateContainer.SetProperty(username);
+        ChangePropertyValue(username, client);
+        ChangeIconValue();
 
         User = await client.GetFromJsonAsync<User>($"api/user/u/{username}");
         PhoneNumber = await client.GetStringAsync($"api/user/u/{username}/phone");
         Products = await client.GetFromJsonAsync<Product[]>($"api/product/u/{username}");
 
         StateContainer.OnChange += StateHasChanged;
-    }
-
-    private void ChangePropertyValue()
-    {
-        StateContainer.SetProperty(username);
-    }
-
-
-    public void Dispose()
-    {
-        StateContainer.OnChange -= StateHasChanged;
     }
 
     private void ChangeIconValue()

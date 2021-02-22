@@ -5,8 +5,24 @@
 @inject IHttpClientFactory ClientFactory
 @inject Services.StateContainer StateContainer
 @layout MainLayout
+@inherits ProfileBase
 
 <Title Value="@username" />
+
+@if(User != null) {
+  if(!String.IsNullOrEmpty(User.ImageUrl)) {
+    <div>
+      <Header Username="@username" ImageUrl="@User.ImageUrl"/>
+    </div>
+  }
+  else {
+    <div>
+      <Header Username="@username" ImageUrl="/assets/logo/person-circle.svg"/>
+    </div>
+    
+  }
+}
+
 
 @if(Schedules == null) {
     <div>
@@ -47,34 +63,18 @@ else {
 
 
 @code {
-    [Parameter] public string username { get; set; }
-    private Schedule[] Schedules { get; set; }
-
-    private User User { get; set; }
-    private int Count = 1;
 
     protected override async Task OnInitializedAsync() {
 
-        ChangePropertyValue();
-        ChangeIconValue();
-
         var client = ClientFactory.CreateClient("ServerAPI.NoAuthenticationClient");
+        StateContainer.SetProperty(username);
+        ChangePropertyValue(username, client);
+        ChangeIconValue();
 
         User = await client.GetFromJsonAsync<User>($"api/user/u/{username}");
         Schedules = await client.GetFromJsonAsync<Schedule[]>($"api/Schedule/u/{username}");
 
         StateContainer.OnChange += StateHasChanged;
-    }
-
-    private void ChangePropertyValue()
-    {
-        StateContainer.SetProperty(username);
-    }
-
-
-    public void Dispose()
-    {
-        StateContainer.OnChange -= StateHasChanged;
     }
 
     private void ChangeIconValue()
@@ -88,10 +88,5 @@ else {
         StateContainer.SetChefIcon("/assets/icons/food.svg");
         StateContainer.SetBartenderIcon("/assets/icons/alcohol.svg");
         StateContainer.SetProductIcon("/assets/icons/cart.svg");
-    }
-    private string GetModalId()
-    {
-        var num = Count++;
-        return "modal" + num;
     }
 }
