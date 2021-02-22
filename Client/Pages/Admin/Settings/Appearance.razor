@@ -1,0 +1,75 @@
+@page "/admin/settings/appearance"
+@using Microsoft.Extensions.Configuration
+@using Profile.Shared.Models
+@layout AppLayout
+@inject IJSRuntime JSRuntime
+@inject HttpClient client
+@inject IHttpClientFactory ClientFactory
+@inject IConfiguration Configuration
+
+
+<div class="card border-0 rounded shadow m-2 mt-4">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-5">
+                <a>
+                    @if(ProfileUser != null && !String.IsNullOrEmpty(ProfileUser.ImageUrl)) {
+                        <img src="@ProfileUser.ImageUrl" alt="profile picture" class="rounded-circle" width="120px" height="120px"/>
+                    }
+                    else {
+                        <img src="assets/icons/profile-picture.svg" alt="profile picture" />
+                    }
+                    
+                </a>
+            </div>
+            <div class="col mt-3 m-2">
+                <div class="row  mb-2">
+                    <button class="button dark-blue" onclick="exampleJsFunctions.uploadImage()">Add an Image</button>
+                </div>
+                <div class="row mb-2">
+                    <button class="button grey">Remove</button>
+                </div>
+                
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    private static string responseBody;
+    public static ProfileUser ProfileUser { get; set; }
+    public static string BaseAddress { get; set; }
+    public static string ImageUrl { get; set; }
+
+    protected override async Task OnInitializedAsync() {
+        ProfileUser = await client.GetFromJsonAsync<ProfileUser>("api/user");
+        ImageUrl = ProfileUser.ImageUrl;
+        BaseAddress = client.BaseAddress.ToString();
+        StateHasChanged();
+        
+    }
+
+    [JSInvokable]
+    public static async void UploadImage(string handle) {
+        
+        HttpClient client = new HttpClient();
+
+        ProfileUser.ImageUrl = $"https://cdn.filestackcontent.com/{handle}";
+
+        ImageUrl = $"https://cdn.filestackcontent.com/{handle}";
+        
+        var requestMessage = new HttpRequestMessage()
+        {
+            Method = new HttpMethod("PUT"),
+            RequestUri = new Uri($"{BaseAddress}api/user/{ProfileUser.Id}"),
+            Content =
+                JsonContent.Create(ProfileUser)
+        };
+        var response = await client.SendAsync(requestMessage);
+        var responseStatusCode = response.StatusCode;
+        responseBody = await response.Content.ReadAsStringAsync();
+        
+        
+    }
+}
