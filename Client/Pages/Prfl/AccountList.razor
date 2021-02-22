@@ -7,9 +7,23 @@
 @inject StateContainer StateContainer
 @implements IDisposable
 @layout MainLayout
+@inherits ProfileBase
 
 <Title Value="@username" />
 
+@if(User != null) {
+  if(!String.IsNullOrEmpty(User.ImageUrl)) {
+    <div>
+      <Header Username="@username" ImageUrl="@User.ImageUrl"/>
+    </div>
+  }
+  else {
+    <div>
+      <Header Username="@username" ImageUrl="/assets/logo/person-circle.svg"/>
+    </div>
+    
+  }
+}
 
 
 
@@ -51,26 +65,20 @@ else {
 
 
 @code {
-    [Parameter] public string username { get; set; }
     public string UserId { get; set; }
-    private Account[] Accounts { get; set; }
-    private User User { get; set; }
     protected override async Task OnInitializedAsync() {
-        ChangePropertyValue();
-        ChangeIconValue();
 
         var client = ClientFactory.CreateClient("ServerAPI.NoAuthenticationClient");
+
+        StateContainer.SetProperty(username);
+        ChangePropertyValue(username, client);
+        ChangeIconValue();
 
         User = await client.GetFromJsonAsync<User>($"api/user/u/{username}");
         Accounts = await client.GetFromJsonAsync<Account[]>($"api/account/u/{username}");
         
         StateContainer.OnChange += StateHasChanged;
     } 
-
-    private void ChangePropertyValue()
-    {
-        StateContainer.SetProperty(username);
-    }
 
     private void ChangeIconValue()
     {
@@ -84,12 +92,5 @@ else {
         StateContainer.SetBartenderIcon("/assets/icons/alcohol.svg");
         StateContainer.SetProductIcon("/assets/icons/cart.svg");
     }
-
-
-    public void Dispose()
-    {
-        StateContainer.OnChange -= StateHasChanged;
-    }
-
 
 }

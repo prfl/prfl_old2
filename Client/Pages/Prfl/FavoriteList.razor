@@ -7,9 +7,23 @@
 @inject HttpClient client
 @inject IHttpClientFactory ClientFactory
 @layout MainLayout
-
+@inherits ProfileBase
 
 <Title Value="@username" />
+
+@if(User != null) {
+  if(!String.IsNullOrEmpty(User.ImageUrl)) {
+    <div>
+      <Header Username="@username" ImageUrl="@User.ImageUrl"/>
+    </div>
+  }
+  else {
+    <div>
+      <Header Username="@username" ImageUrl="/assets/logo/person-circle.svg"/>
+    </div>
+    
+  }
+}
 
 
 
@@ -108,36 +122,24 @@ else {
 }
 
 
-
 @code {
-    [Parameter] public string username { get; set; }
-    private int Count = 1;
-    private Favorite[] Favorites { get; set; }
-    private Account[] Accounts { get; set; }
-    private Account Account { get; set; }
-    private Schedule Schedule { get; set; }
-    private Schedule[] Schedules { get; set; }
-    private Recipe[] Recipes { get; set; }
-    private Ingredient[] Ingredients { get; set; }
-    private Product[] Products { get; set; }
-    private string PhoneNumber { get; set; }
-    private User User { get; set;}
-
-
+    
     protected override async Task OnInitializedAsync() {
 
-        ChangePropertyValue();
+        var client = ClientFactory.CreateClient("ServerAPI.NoAuthenticationClient");
+
+        StateContainer.SetProperty(username);
+        ChangePropertyValue(username, client);
         ChangeIconValue();
 
         StateContainer.OnChange += StateHasChanged;
-
-        var client = ClientFactory.CreateClient("ServerAPI.NoAuthenticationClient");
 
         Favorites = await client.GetFromJsonAsync<Favorite[]>($"api/favorite/u/{username}");
         Accounts = await client.GetFromJsonAsync<Account[]>($"api/account/u/{username}");
         Schedules = await client.GetFromJsonAsync<Schedule[]>($"api/Schedule/u/{username}");
         Recipes = await client.GetFromJsonAsync<Recipe[]>($"api/Recipe/u/{username}");
         Products = await client.GetFromJsonAsync<Product[]>($"api/product/u/{username}");
+
         if(Products != null) {
           PhoneNumber = await client.GetStringAsync($"api/user/u/{username}/phone");
         }
@@ -146,19 +148,6 @@ else {
         
         StateContainer.OnChange += StateHasChanged;
     }
-
-    private void ChangePropertyValue()
-    {
-        StateContainer.SetProperty(username);
-    }
-
-
-
-    public void Dispose()
-    {
-        StateContainer.OnChange -= StateHasChanged;
-    }
-
     private void ChangeIconValue()
     {
         StateContainer.SetAccountIcon("/assets/icons/account.svg");
@@ -172,28 +161,9 @@ else {
         StateContainer.SetProductIcon("/assets/icons/cart.svg");
     }
 
-    private string GetModalId()
-    {
-        Count += 1;
-        return "modal" + Count;
-    }
+    
 
-    private void SetAccount(string accountId){ 
-      Account = Accounts.FirstOrDefault(a => a.AccountId == accountId);
-    }
-    private void SetSchedule(string scheduleId){ 
-      Schedule = Schedules.FirstOrDefault(a => a.ScheduleId == scheduleId);
-    }
-
-    private Recipe SetRecipe(string recipeId){ 
-      return Recipes.FirstOrDefault(a => a.RecipeId == recipeId);
-    }
-
-    public async Task GetIngredients(string recipeId) {
-        var client = ClientFactory.CreateClient("ServerAPI.NoAuthenticationClient");
-        Ingredients = await client.GetFromJsonAsync<Ingredient[]>($"api/ingredient/recipe/{recipeId}");
-        StateHasChanged();
-    }
+    
     
 
 

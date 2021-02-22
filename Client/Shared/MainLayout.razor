@@ -11,18 +11,7 @@
 
 
 <div class="page">
-    <div class="sidebar m-2 shadow rounded bg-white">
-        @if(Username != null && Username.Length > 0) {
-            <Header Username="@Username"/>
-        }
-
-    </div>
-
     <div class="main">
-        <div class="top-row px-2 mt-2 mx-1 shadow-sm">
-            <a href="https://prfl.ga/about" target="_blank" class="ml-md-auto">About</a>
-        </div>
-        
         <div class="content">
             <div class="container">
                 @Body
@@ -54,8 +43,5 @@
             Username = StateContainer.Username;
             StateHasChanged();
         }
-        
     }
 }
-
-       
