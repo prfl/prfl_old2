@@ -1,11 +1,13 @@
 @page "/admin/settings/appearance"
-@using Microsoft.Extensions.Configuration
-@using Profile.Shared.Models
 @layout AppLayout
+@using Profile.Client.Components.Prfl
+@using Profile.Shared.Models
 @inject IJSRuntime JSRuntime
 @inject HttpClient client
-@inject IHttpClientFactory ClientFactory
-@inject IConfiguration Configuration
+@inject NavigationManager NavigationManager
+
+
+<Title Value="Appearance"/>
 
 
 <div class="card border-0 rounded shadow m-2 mt-4">
@@ -14,20 +16,20 @@
             <div class="col-5">
                 <a>
                     @if(ProfileUser != null && !String.IsNullOrEmpty(ProfileUser.ImageUrl)) {
-                        <img src="@ProfileUser.ImageUrl" alt="profile picture" class="rounded-circle" width="120px" height="120px"/>
+                        <img id="imageUrl" src="@ProfileUser.ImageUrl" alt="profile picture" class="rounded-circle" width="120px" height="120px"/>
                     }
                     else {
-                        <img src="assets/icons/profile-picture.svg" alt="profile picture" />
+                        <img id="imageUrl" src="assets/icons/profile-picture.svg" alt="profile picture" width="120px" height="120px"/>
                     }
                     
                 </a>
             </div>
             <div class="col mt-3 m-2">
                 <div class="row  mb-2">
-                    <button class="button dark-blue" onclick="exampleJsFunctions.uploadImage()">Add an Image</button>
+                    <button id="upload_widget"  class="button dark-blue" onclick="exampleJsFunctions.uploadImageCloudinary()">Add an Image</button>
                 </div>
                 <div class="row mb-2">
-                    <button class="button grey">Remove</button>
+                    <button class="button grey" @onclick="RemoveImage">Remove</button>
                 </div>
                 
             </div>
@@ -37,31 +39,24 @@
 </div>
 
 @code {
-    private static string responseBody;
     public static ProfileUser ProfileUser { get; set; }
     public static string BaseAddress { get; set; }
-    public static string ImageUrl { get; set; }
-
+    private static string responseBody;
     protected override async Task OnInitializedAsync() {
-        ProfileUser = await client.GetFromJsonAsync<ProfileUser>("api/user");
-        ImageUrl = ProfileUser.ImageUrl;
         BaseAddress = client.BaseAddress.ToString();
-        StateHasChanged();
-        
+        ProfileUser = await client.GetFromJsonAsync<ProfileUser>("api/user");
     }
 
     [JSInvokable]
-    public static async void UploadImage(string handle) {
+    public static async void UploadImageCloundinary(string handle) {
         
         HttpClient client = new HttpClient();
 
-        ProfileUser.ImageUrl = $"https://cdn.filestackcontent.com/{handle}";
-
-        ImageUrl = $"https://cdn.filestackcontent.com/{handle}";
+        ProfileUser.ImageUrl = handle;
         
         var requestMessage = new HttpRequestMessage()
         {
-            Method = new HttpMethod("PUT"),
+            Method = new System.Net.Http.HttpMethod("PUT"),
             RequestUri = new Uri($"{BaseAddress}api/user/{ProfileUser.Id}"),
             Content =
                 JsonContent.Create(ProfileUser)
@@ -69,7 +64,18 @@
         var response = await client.SendAsync(requestMessage);
         var responseStatusCode = response.StatusCode;
         responseBody = await response.Content.ReadAsStringAsync();
-        
-        
     }
+
+    public async void RemoveImage() {
+        ProfileUser.ImageUrl = "";
+        await client.PutAsJsonAsync($"api/user/{ProfileUser.Id}", ProfileUser);
+    }
+
+    /*protected override async Task OnAfterRenderAsync(bool firstRender) {
+        if(firstRender) {
+            Console.WriteLine("Rendering Cloudinary");
+            await JSRuntime.InvokeVoidAsync("exampleJsFunctions.initCloudinary");
+            Console.WriteLine("Cloudinary Rendered");
+        }
+    }*/
 }
