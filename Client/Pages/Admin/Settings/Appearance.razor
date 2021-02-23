@@ -57,7 +57,7 @@
         var requestMessage = new HttpRequestMessage()
         {
             Method = new System.Net.Http.HttpMethod("PUT"),
-            RequestUri = new Uri($"{BaseAddress}api/user/{ProfileUser.Id}"),
+            RequestUri = new Uri($"{BaseAddress}api/user/{ProfileUser.Id}/image"),
             Content =
                 JsonContent.Create(ProfileUser)
         };
@@ -70,12 +70,4 @@
         ProfileUser.ImageUrl = "";
         await client.PutAsJsonAsync($"api/user/{ProfileUser.Id}", ProfileUser);
     }
-
-    /*protected override async Task OnAfterRenderAsync(bool firstRender) {
-        if(firstRender) {
-            Console.WriteLine("Rendering Cloudinary");
-            await JSRuntime.InvokeVoidAsync("exampleJsFunctions.initCloudinary");
-            Console.WriteLine("Cloudinary Rendered");
-        }
-    }*/
 }
