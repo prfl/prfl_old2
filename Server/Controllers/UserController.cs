@@ -19,11 +19,21 @@ namespace Profile.Server.Controllers
     {
         private readonly ProfileContext _context;
         private readonly UserManager<ProfileUser> _userManager;
+        private readonly SignInManager<ProfileUser> _signInManager;
 
-        public UserController(ProfileContext context, UserManager<ProfileUser> userManager)
+        public UserController(ProfileContext context, UserManager<ProfileUser> userManager, SignInManager<ProfileUser> signInManager)
         {
             _context = context;
             _userManager = userManager;
+            _signInManager = signInManager;
+        }
+
+        [BindProperty]
+        public InputModel Input { get; set; }
+
+        public class InputModel
+        {
+            public string ImageUrl { get; set; }
         }
 
         // GET: api/User
@@ -97,11 +107,13 @@ namespace Profile.Server.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(profileUser).State = EntityState.Modified;
+            //_context.Entry(profileUser).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+
+                var user = profileUser;
+                var updateUser = await _userManager.UpdateAsync(user);
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -118,31 +130,29 @@ namespace Profile.Server.Controllers
             return NoContent();
         }
 
-        // POST: api/User
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("image/{imageUrl}")]
-        public async Task<ActionResult> UpdateProfilePicture(string imageUrl, ProfileUser profileUser)
+        //POST: api/User
+        //To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}/image")]
+        public async Task<ActionResult> UpdateProfilePicture(string id, ProfileUser profileUser)
         {
+            var user = await _userManager.FindByIdAsync(profileUser.Id);
 
-            var userId = _userManager.GetUserId(User);
-            profileUser = await _userManager.FindByIdAsync(userId);
-            profileUser.ImageUrl = imageUrl;
-
-            _context.Entry(profileUser).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (ProfileUserExists(userId))
+            if(user.ImageUrl != profileUser.ImageUrl) {
+                try
                 {
-                    return Conflict();
+                    user.ImageUrl = profileUser.ImageUrl;
+                    IdentityResult result = await _userManager.UpdateAsync(user);
                 }
-                else
+                catch (DbUpdateException)
                 {
-                    throw;
+                    if (ProfileUserExists(id))
+                    {
+                        return Conflict();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
             }
 
@@ -194,5 +204,6 @@ namespace Profile.Server.Controllers
         {
             return _context.Users.Any(e => e.Id == id);
         }
+
     }
 }
