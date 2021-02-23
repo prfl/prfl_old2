@@ -53,29 +53,57 @@ function initialize(i,t){
     }
     
 window.exampleJsFunctions = {
-  uploadImage: function () {
-    let imageHandle = "";
-    const apikey = 'AV4oJQB1wSR6myENuSOlkz';
-    const client = filestack.init(apikey);
-    
-    const options = {
-      uploadInBackground: false,
-      onFileSelected: file => {
-        // If you throw any error in this function it will reject the file selection.
-        // The error message will be displayed to the user as an alert.
-        if (file.size > 1000 * 1000) {
-            throw new Error('File too big, select something smaller than 1MB');
-        }
-      },
-      onFileUploadFinished: (response) => {
-        // after file upload, make request with data to your application
-          imageHandle = response.handle;
-          console.log(imageHandle);
-          DotNet.invokeMethodAsync('Profile.Client', 'UploadImage', imageHandle)
-        }
-      }
-      const picker = client.picker(options);
-      picker.open();
+
+    uploadImageCloudinary: function () {
+      myWidget.open();
     }
     
   }
+
+  var myWidget = cloudinary.createUploadWidget({
+    cloudName: 'prfl',
+    uploadPreset: 'b398bnht',
+    secure: true,
+    cropping: true,
+    multiple: false,
+    maxFiles: 1,
+    showSkipCropButton: false,
+    croppingAspectRatio: 1,
+    croppingDefaultSelectionRatio: 0.75,
+    sources: [ 'local', 'url', 'facebook', 'instagram'],
+    defaultSource: "local",
+    styles: {
+      palette: {
+          window: "#ffffff",
+          sourceBg: "#f4f4f5",
+          windowBorder: "#90a0b3",
+          tabIcon: "#000000",
+          inactiveTabIcon: "#555a5f",
+          menuIcons: "#555a5f",
+          link: "#0433ff",
+          action: "#339933",
+          inProgress: "#0433ff",
+          complete: "#339933",
+          error: "#cc0000",
+          textDark: "#000000",
+          textLight: "#fcfffd"
+      },
+      fonts: {
+          default: null,
+          "sans-serif": {
+              url: null,
+              active: true
+          }
+      }
+    }
+  }, (error, result) => { 
+      if (!error && result && result.event === "success") { 
+        
+        DotNet.invokeMethodAsync('Profile.Client', 'UploadImageCloundinary', result.info.url)
+        console.log('Done! Here is the image url: ', result.info.url);
+        let imageUrl = document.getElementById("imageUrl");
+        imageUrl.src = result.info.url;
+      }
+    },
+  )
+  
